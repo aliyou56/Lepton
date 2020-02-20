@@ -10,6 +10,7 @@ Ceci est le dépôt git du groupe d'étudiants qui travaille sur le projet LEPTO
 - [aDTN](https://github.com/SeNDA-UAB/aDTN-platform)
 - [IBR-DTN](https://github.com/ibrdtn/ibrdtn)
 - [DGS](http://graphstream-project.org)
+- [DGS File format](http://graphstream-project.org/doc/Advanced-Concepts/The-DGS-File-Format/)
 
 ## Cloner
 
