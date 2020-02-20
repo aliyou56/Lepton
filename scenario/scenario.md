@@ -8,10 +8,27 @@ Liste de scénarios potentiellement exploitables issues de la base de donnée cr
 
 ### Mobilité
 
-- [coppe-ufrj/RioBuses](https://crawdad.org/coppe-ufrj/RioBuses/20180319/)
-- [oviedo/asturies-er](https://crawdad.org/oviedo/asturies-er/20160808/)
-- [roma/taxi](https://crawdad.org/roma/taxi/20140717/)
+- [coppe-ufrj/RioBuses](https://crawdad.org/coppe-ufrj/RioBuses/20180319/)  
+période: 1 min  
+durée: 1 mois
+
+- [oviedo/asturies-er ](https://crawdad.org/oviedo/asturies-er/20160808/)  
+période: 30 sec  
+durée: 1 an
+
+- [roma/taxi](https://crawdad.org/roma/taxi/20140717/)  
+période: <10 sec  
+durée: 1 mois
+
+
 - [kth/walkers](https://crawdad.org/kth/walkers/20140505/)
+  - subway  
+période: 0.6 sec  
+durée: 1 heure
+  - simulations  
+période: 0.6 sec  
+durée: 5 heures
+
 
 ### Application
 
