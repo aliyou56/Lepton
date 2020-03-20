@@ -10,6 +10,7 @@ nodeFile = taxi_nodes.txt
 outputFile = taxi_roma.dgs
 outputFileMaxNode = taxi_roma_$(max_node).dgs
 header = dgs_header.txt
+histFile = taxi_roma.hist
 
 in = ../taxi_february.txt
 p = python3
@@ -43,8 +44,10 @@ removebuildfiles :
 	rm -f $(header) $(eventFile) $(nodeFile)
 clean: removebuildfiles
 	rm -f *.dgs
+histFile :
+	cat $(nodeFile) | $(p) $(dgsScripts)hist_from_node_file.py $(length) > $(histFile)
 
-all: outputFile removebuildfiles
+all: outputFile histFile removebuildfiles
 	cat $(outputFile) |\
 	$(p) $(dgsScripts)dgs_cut.py $(start) $(length) |\
 	$(p) $(dgsScripts)dgs_remove_nodes.py $(max_node) > $(outputFileMaxNode)
