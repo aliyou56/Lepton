@@ -1,1 +1,5 @@
 .vscode/settings.json
+*pycache*
+*.dgs
+*.txt
+*.hist
