@@ -10,7 +10,7 @@ init_dirs () {
   # 
   # LEPTON_HOME: lepton home dir
 
-	dir=${LEPTON_HOME%/*}
+	dir=${lepton_home}
 	base_dir=$dir/output/adtn
 	node_dir=${base_dir}/${node_id}
 	pid_file=${node_dir}/pid
@@ -26,7 +26,7 @@ init_vars () {
   # use lockfile command (from procmail paquet -> sudo apt install procmail)
 
 	# Variables for the configuration
-	log_level=21
+	log_level=6
 	queue_size="1M"
 	# -------------------
   DEFAULT_START_PORT=40000
