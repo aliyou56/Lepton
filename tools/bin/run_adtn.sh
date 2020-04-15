@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ###  
-###  Run a scenario with ADTN nodes.
+###  Run scenarios (mobility & application) with ADTN nodes.
 ###  
 ###  usage: ./run_adtn.sh <sceanrio_name>
 ###     A directory scenario_name must exist under ${LEPTON_HOME}/scenario/
@@ -16,6 +16,9 @@ fi
 
 # parent directory for output
 main_dir=${LEPTON_HOME}
+if [[ "${LEPTON_VAR}" != "" ]]; then
+    main_dir=${LEPTON_VAR}/../..
+fi
 # echo "main_dir        -> ${main_dir}"
 # clean output 
 rm -r ${main_dir}/output/adtn/* 2> /dev/null
@@ -30,7 +33,8 @@ echo "38000" > ${port_dir}/port_aux # 38000 -> starting port number for adtn nod
 scenario=$1
 scenario_dir=${LEPTON_HOME}/scenario/${scenario}
 conf_file="${scenario_dir}/lepton.conf"
-echo "scenario -> ${scenario}"    
+echo "scenario      -> ${scenario}"    
+echo "scenario_dir  -> ${scenario_dir}"    
 
 if [ ! -d $scenario_dir ]; then
     echo " Error: can't find scenario_dir -> ${scenario_dir}"
@@ -52,7 +56,7 @@ else
 fi
 
 lepton_params+=" oppnet_adapter=${ADTNPLUS_ADAPTER_HOME}/bin/adapter.sh"
-echo "lepton_params   -> $lepton_params"
+echo "lepton_params -> $lepton_params"
 echo ""
 
 # start lepton with the defined params
