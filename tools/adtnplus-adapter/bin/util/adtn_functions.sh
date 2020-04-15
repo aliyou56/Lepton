@@ -10,7 +10,10 @@ init_dirs () {
   # 
   # LEPTON_HOME: lepton home dir
 
-	dir=${lepton_home}
+	dir=${LEPTON_HOME} 
+  if [[ "${LEPTON_VAR}" != "" ]]; then
+    dir=${LEPTON_VAR}/../..
+  fi
 	base_dir=$dir/output/adtn
 	node_dir=${base_dir}/${node_id}
 	pid_file=${node_dir}/pid
@@ -110,16 +113,15 @@ nodeId : NODE_ID
 nodeAddress : NODE_ADDR
 nodePort : NODE_PORT
 # Clean the previous bundles
-clean : false
+clean : true
 
 [NeighbourDiscovery]
 discoveryAddress : DISC_ADDR
 discoveryPort : DISC_PORT
-# discoveryPeriod : 2
 discoveryPeriod : DISC_PERI
 
-neighbourExpirationTime : 6 ## 4
-neighbourCleanerTime : 4 ## 2
+neighbourExpirationTime : 4
+neighbourCleanerTime : 2
 testMode : false
 
 [Logger]
@@ -217,13 +219,13 @@ send() {
   # $1     : id of the destination node (required)
   # $2     : message to be send (required)
 
-  echo Sending message from $node_id to $1
+  # echo Sending message from $node_id to $1
 
   dst=$1
   message=${*:2:$#}
 
   # echo $message
-  echo \"$message\"
+  # echo \"$message\"
 
   init_dirs
 
@@ -243,7 +245,7 @@ recv() {
   #
   # node_id: id of the node that should receive messages (required)
 
-  echo Receiving file on node $node_id
+  # echo Receiving file on node $node_id
 
   init_dirs
 
@@ -252,5 +254,6 @@ recv() {
   ip_listen=$(cat $conf_file | grep listenerAddress | cut -d" " -f 3)
   port_listen=$(cat $conf_file | grep listenerPort | cut -d" " -f 3)
   
+  echo $adtnrecv -i $ip_listen -p $port_listen -a $node_id
   $adtnrecv -i $ip_listen -p $port_listen -a $node_id
 }
