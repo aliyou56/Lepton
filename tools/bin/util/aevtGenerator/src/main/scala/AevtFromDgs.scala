@@ -16,6 +16,7 @@ object Main {
         var result = new StringBuilder
         var outputFilename = "app.aevt" // default name of the output file
         if(args.length > 1) outputFilename = args(1)
+        val online_pattern = """online=(true|false)""".r;
 
         Try(Source.fromFile(args(0))) match {
             case Success(buff) => {
@@ -33,10 +34,12 @@ object Main {
 
         def processLine(line : String) : Option[String] = {
             var res : Option[String] = None
-            val values = line.split(" ")
-            if(values.size > 1)
-            values(0) match {
-                case "st" => {
+            val pattern_st = """st (\d+)""".r;
+            val pattern_an = """an (\w+) (.*)""".r;
+            val pattern_cn = """cn (\w+) online=(true|false)""".r;
+            val pattern_dn = """dn (\w+)""".r;
+            line match {
+                case pattern_st(step) => {
                     if(nodes.size > 1) {
                         if ( (Random.nextDouble * 5).toInt == 0 ) {
                             var idx1 = Random.nextInt(nodes.size)
@@ -44,23 +47,13 @@ object Main {
                             if (idx1 == idx2) {
                                 idx2 = (idx2 + 1) % nodes.size;
                             }
-                            val step = values(1)
                             res = Some(step +" snd "+ nodes(idx1) +" dst-id="+ nodes(idx2) +" mid="+ nodes(idx1) +"@" + nodes(idx2) +"-"+ step)
                         }
                     }
-                }  
-                case "an" => {
-                    var nodeId = values(1)
-                    // val typeArr = values(2).split(" ")
-                    // if(typeArr(0).equals("profile")) {
-                    //     nodeId += ":" + typeArr(1) 
-                    // }
-                    nodes += nodeId
                 }
-                case "dn" => {
-                    val nodeId = values(1)
-                    nodes -= nodeId
-                }
+                case pattern_an(nodeId, params) => if(!params.contains("online=false")) nodes += nodeId;
+                case pattern_cn(nodeId, online) => if(Try(online.toBoolean).getOrElse(false)) nodes += nodeId else nodes -= nodeId;
+                case pattern_dn(nodeId) => nodes -= nodeId;
                 case _ =>
             }
             res
