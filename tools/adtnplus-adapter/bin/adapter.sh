@@ -6,9 +6,7 @@
 #  Need the following variables to be set
 #	  - ADTNPLUS_HOME
 #	  - ADTNPLUS_ADAPTER_HOME
-#	  - ADTNPLUS_CONF
 #---------------------------------------------------------------------
-
 
 if [ -z $ADTNPLUS_HOME ]; then
     echo "Error: \$ADTNPLUS_HOME is not defined."
@@ -20,18 +18,12 @@ if [ -z $ADTNPLUS_ADAPTER_HOME ]; then
     exit 1
 fi
 
-if [ -z $ADTNPLUS_CONF ]; then
-    echo "Error: \$ADTNPLUS_CONF is not defined."
-    exit 1
-	# ADTNPLUS_CONF="/var/lib/adtnPlus"
-fi
-
 #---------------------------------------------------------------------
 # Variables used by LEPTON
 #---------------------------------------------------------------------
 #  Tags identifying the LEPTON process and a node process
 #lepton_process_tag="casa.lepton.leptond"
-node_process_tag=adtn
+node_process_tag=BundleAgent
 
 # OppNetAdapter class name and classpath
 oppnet_adapter_classname=uab.senda.lepton.hub.AdtnPlus_Adapter
@@ -57,9 +49,18 @@ disc_port=4500
 node_addr=$lepton_host
 list_addr=$lepton_host
 
+neighbour_expiration_time=4
+neighbour_cleaner_time=2
+
+log_level=6
+timeout=20
+queue_size="1M"
+# process_timeout=30
+
+processor=libaDTNPlus_FirstFwkBundleProcessor.so
+
 # ------------------------------------------------------------
-# Functions used by LEPTON: start_node() and stop_node() are inherited
-# from ${DODWAN_HOME}/bin/util/ibrdtn_functions.sh
+# Functions used by LEPTON: start_node() and stop_node() 
 # ------------------------------------------------------------
 
 . ${ADTNPLUS_ADAPTER_HOME}/bin/util/adtn_functions.sh
@@ -98,7 +99,8 @@ start_node() {
  	# fi
  	if [ ! -d $node_dir/Plugins ]; then
  		mkdir -p $node_dir/Plugins
- 		cp $ADTNPLUS_CONF/Plugins/* $node_dir/Plugins/
+ 		# cp $ADTNPLUS_CONF/Plugins/* $node_dir/Plugins/
+ 		cp $ADTNPLUS_CONF/Plugins/${processor} $node_dir/Plugins/
  	fi
  	if [ ! -d $node_dir/Trash/aggregation/reception ]; then
  		mkdir -p $node_dir/Trash/aggregation/reception
@@ -132,7 +134,7 @@ stop_node() {
 
   	pid=$(cat $pid_file) 
  	kill $pid >& /dev/null
-  	rm -f $pid_file
+  	# rm -f $pid_file
 }
 
 #---------------------------------------------------------------------

@@ -12,7 +12,10 @@ init_dirs () {
 
 	dir=${LEPTON_HOME} 
   if [[ "${LEPTON_VAR}" != "" ]]; then
-    dir=${LEPTON_VAR}/../..
+    curr_dir=$(dirname $0)
+    cd ${LEPTON_VAR}/../.. 
+    dir=$(pwd)
+    cd $curr_dir
   fi
 	base_dir=$dir/output/adtn
 	node_dir=${base_dir}/${node_id}
@@ -28,31 +31,27 @@ init_vars () {
   #  
   # use lockfile command (from procmail paquet -> sudo apt install procmail)
 
-	# Variables for the configuration
-	log_level=6
-	queue_size="1M"
-	# -------------------
-  DEFAULT_START_PORT=40000
+  # DEFAULT_START_PORT=40000
 
-	port_aux_dir="/run/shm/tmp"
-	if [ ! -d $port_aux_dir ]; then
-		mkdir -p $port_aux_dir
-		echo $DEFAULT_START_PORT > $port_aux_dir/port_aux
-	fi
+	port_dir="/run/shm/tmp"
+	# if [ ! -d $port_dir ]; then
+	# 	mkdir -p $port_dir
+	# 	echo $DEFAULT_START_PORT > $port_dir/port_aux
+	# fi
 
-	lockfile -1 -r-1 -l3 $port_aux_dir/port_aux.lock ### Semaphore port_aux
+	lockfile -1 -r-1 -l3 ${port_dir}/port_aux.lock ### Semaphore port_aux
 
-	START_PORT_ACCEPT=$(cat $port_aux_dir/port_aux)
+	START_PORT_ACCEPT=$(cat ${port_dir}/port_aux)
   node_port=${START_PORT_ACCEPT} 
   ((++START_PORT_ACCEPT))
   list_port=${START_PORT_ACCEPT} 
   ((++START_PORT_ACCEPT))
-  echo $START_PORT_ACCEPT > $port_aux_dir/port_aux
+  echo $START_PORT_ACCEPT > ${port_dir}/port_aux
   # next_port; node_port=${START_PORT_ACCEPT} 
   # next_port; list_port=${START_PORT_ACCEPT} 
-  # next_port; echo $START_PORT_ACCEPT > $port_aux_dir/port_aux
+  # next_port; echo $START_PORT_ACCEPT > ${port_dir}/port_aux
 	
-	rm -f $port_aux_dir/port_aux.lock              ### end Semaphore port_aux
+	rm -f $port_dir/port_aux.lock              ### end Semaphore port_aux
 }
 
 #---------------------------------------------------------------------
@@ -99,12 +98,16 @@ gen_conf_file() {
                   -e s%DISC_ADDR%${disc_addr}%g \
                   -e s%DISC_PORT%${disc_port}%g \
                   -e s%DISC_PERI%${hub_period}%g \
+                  -e s%NHB_EXP_TIME%${neighbour_expiration_time}%g \
+                  -e s%NHB_CLEAN_TIME%${neighbour_cleaner_time}%g \
                   -e s%LOG_LEVEL%${log_level}%g \
+                  -e s%TIMEOUT%${timeout}%g \
                   -e s%QUEUE_SIZE%${queue_size}%g \
                   -e s%NODE_DIR%${node_dir}%g \
                   -e s%LIST_ADDR%${list_addr}%g \
                   -e s%LIST_PORT%${list_port}%g \
                   -e s%NODE_FILE%${node_file}%g \
+                  -e s%PROCESSOR%${processor}%g \
           > ${conf_file}
 # This file contains the configuration of the aDTNPlus.
 
@@ -120,8 +123,8 @@ discoveryAddress : DISC_ADDR
 discoveryPort : DISC_PORT
 discoveryPeriod : DISC_PERI
 
-neighbourExpirationTime : 4
-neighbourCleanerTime : 2
+neighbourExpirationTime : NHB_EXP_TIME
+neighbourCleanerTime : NHB_CLEAN_TIME
 testMode : false
 
 [Logger]
@@ -129,13 +132,13 @@ filename : NODE_DIR/adtn.log
 level : LOG_LEVEL
 
 [Constants]
-timeout : 10
+timeout : TIMEOUT
 queueByteSize : QUEUE_SIZE
-processTimeout : 10
+processTimeout : 30
 
 [BundleProcess]
 dataPath : NODE_DIR/Bundles/
-bundleProcessName : NODE_DIR/Plugins/libaDTNPlus_FirstFwkBundleProcessor.so
+bundleProcessName : NODE_DIR/Plugins/PROCESSOR
 # codePath : NODE_DIR/Codes/ 
 deliveryPath : NODE_DIR/Delivered/
 trashAggregationReception : NODE_DIR/Trash/aggregation/reception/
@@ -234,8 +237,8 @@ send() {
   ip_src=$(cat $conf_file | grep nodeAddress | cut -d" " -f 3)
   port_src=$(cat $conf_file | grep nodePort | cut -d" " -f 3)
 
-  echo $adtnsend -i $ip_src -p $port_src -d $dst -m "$message"
-  $adtnsend -i $ip_src -p $port_src -d $dst -m "$message"
+  echo $adtnsend -i $ip_src -p $port_src -d $dst -m "$message" -s $node_id 
+  $adtnsend -i $ip_src -p $port_src -d $dst -m "$message" -s $node_id 
 }
 
 #---------------------------------------------------------------------
