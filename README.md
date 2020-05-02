@@ -7,7 +7,7 @@ Ceci est le dépôt git du groupe d'étudiants qui travaille sur le projet LEPTO
 - [LEPTON](https://casa-irisa.univ-ubs.fr/lepton/doc/)
   - [Guide d'installation LEPTON + IBR-DTN](https://casa-irisa.univ-ubs.fr/lepton/doc/howtos/lepton_with_ibrdtn.html)
   - [IBR-DTN + adapter](http://casa-irisa.univ-ubs.fr/download/ibrdtn-for-lepton.zip)
-- [aDTN](https://github.com/SeNDA-UAB/aDTN-platform)
+- [aDTNPlus](https://github.com/SeNDA-UAB/aDTNPlus)
 - [IBR-DTN](https://github.com/ibrdtn/ibrdtn)
 - [DGS](http://graphstream-project.org)
 - [DGS File format](http://graphstream-project.org/doc/Advanced-Concepts/The-DGS-File-Format/)
