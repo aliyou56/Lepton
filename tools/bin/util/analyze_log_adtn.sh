@@ -29,4 +29,4 @@ if [ ! -d ${adtn_out_dir} ]; then
     exit 1
 fi
 
-scala ${script_dir}/libs/adtnLogAnalyzer.jar ${lepton_out_file} ${adtn_out_dir} $1
+scala ${script_dir}/libs/logAnalyzer.jar ${lepton_out_file} ${adtn_out_dir} adtn $1
