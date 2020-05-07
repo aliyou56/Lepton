@@ -3,12 +3,11 @@
 script_dir=$(realpath $(dirname $0))
 
 if [ -z ${main_dir} ]; then
-    main_dir={LEPTON_HOME}
+    main_dir=${LEPTON_HOME}
     if [[ "${LEPTON_VAR}" != "" ]]; then
         current_dir=$(pwd)
-        cd ${LEPTON_VAR}/../.. 
-        main_dir=$(pwd)
-        cd $current_dir
+        cd ${LEPTON_VAR}/../../ && main_dir=$(pwd)
+        cd ${current_dir}
     fi
 fi
 

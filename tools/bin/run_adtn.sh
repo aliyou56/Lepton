@@ -20,11 +20,11 @@ fi
 main_dir=${LEPTON_HOME}
 if [[ "${LEPTON_VAR}" != "" ]]; then
     current_dir=$(pwd)
-    cd ${LEPTON_VAR}/../.. 
-    main_dir=$(pwd)
-    cd $current_dir
+    [[ -d ${LEPTON_VAR} ]] && mkdir -p ${LEPTON_VAR}
+    cd ${LEPTON_VAR}/../../ && main_dir=$(pwd)
+    cd ${current_dir}
 fi
-echo "[run_adtn]: main_dir        -> ${main_dir}"
+echo "[run_adtn]: main_dir      -> ${main_dir}"
 # clean output 
 rm -r ${main_dir}/output/adtn/* 2> /dev/null 
 
@@ -38,8 +38,8 @@ echo "40000" > ${port_dir}/port_aux # 40000 -> starting port number for adtn nod
 scenario=$1
 scenario_dir=${LEPTON_HOME}/scenario/${scenario}
 conf_file="${scenario_dir}/lepton.conf"
-echo "[run_adtn]: scenario      -> ${scenario}"    
-echo "[run_adtn]: scenario_dir  -> ${scenario_dir}"    
+echo "[run_adtn]: scenario     -> ${scenario}"    
+echo "[run_adtn]: scenario_dir -> ${scenario_dir}"    
 
 if [ ! -d ${scenario_dir} ]; then
     echo " Error: can't find scenario_dir -> ${scenario_dir}"
@@ -64,22 +64,23 @@ lepton_params+=" oppnet_adapter=${ADTNPLUS_ADAPTER_HOME}/bin/adapter.sh"
 echo "lepton_params -> $lepton_params"
 echo ""
 
-#start lepton with the defined params
-lepton.sh start $lepton_params &
+# start lepton with the defined params
+lepton.sh start ${lepton_params} &
 
 sleep 10s # 
 # runnig app scenario
 in_aevt=${scenario_dir}/${scenario}.aevt
-${script_dir}/util/run_app_scenario_adtn.sh $in_aevt &
+${script_dir}/util/run_app_scenario_adtn.sh ${in_aevt} &
 
 duration=1665 # duration of the simulation
 
 # running the performance tracker
-${script_dir}/util/performance_tracker.sh BundleAgent ${duration} ${scenario_dir}/performance &
+${script_dir}/util/performance_tracker.sh BundleAgent ${duration} ${scenario_dir}/result &
 
 sleep ${duration}s # waiting for the end of the simulation
-lepton.sh stop -f # stop Lepton
+lepton.sh stop # stop Lepton
 
+echo ""
 # Analize adtn nodes output logs
-output_file=${scenario_dir}/${scenario}-out.txt
+output_file=${scenario_dir}/result/${scenario}-out.txt
 ${script_dir}/util/analyze_log_adtn.sh ${output_file}

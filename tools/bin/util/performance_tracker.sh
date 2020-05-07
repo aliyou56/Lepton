@@ -43,3 +43,5 @@ done
 
 cleaned_file=${performance_dir}/cleaned-performance.txt
 scala ${script_dir}/libs/performanceDataCleaner.jar ${out_file} ${cleaned_file}
+
+python3 ${script_dir}/plot_perf_data.py ${cleaned_file}
