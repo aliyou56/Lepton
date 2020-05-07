@@ -8,16 +8,14 @@ init_dirs () {
   #
   # Initialize all needed directories for adtnplus files
   # 
-  # LEPTON_HOME: lepton home dir
 
 	dir=${LEPTON_HOME} 
   if [[ "${LEPTON_VAR}" != "" ]]; then
-    curr_dir=$(dirname $0)
-    cd ${LEPTON_VAR}/../.. 
-    dir=$(pwd)
-    cd $curr_dir
+    current_dir=$(dirname $0)
+    cd ${LEPTON_VAR}/../../ && dir=$(pwd)
+    cd ${current_dir}
   fi
-	base_dir=$dir/output/adtn
+	base_dir=${dir}/output/adtn
 	node_dir=${base_dir}/${node_id}
 	pid_file=${node_dir}/pid
 	conf_file=${node_dir}/adtn.ini
@@ -51,7 +49,7 @@ init_vars () {
   # next_port; list_port=${START_PORT_ACCEPT} 
   # next_port; echo $START_PORT_ACCEPT > ${port_dir}/port_aux
 	
-	rm -f $port_dir/port_aux.lock              ### end Semaphore port_aux
+	rm -f ${port_dir}/port_aux.lock              ### end Semaphore port_aux
 }
 
 #---------------------------------------------------------------------
@@ -116,25 +114,25 @@ nodeId : NODE_ID
 nodeAddress : NODE_ADDR
 nodePort : NODE_PORT
 # Clean the previous bundles
-clean : true
+# clean : true
 
 [NeighbourDiscovery]
 discoveryAddress : DISC_ADDR
 discoveryPort : DISC_PORT
 discoveryPeriod : DISC_PERI
 
-neighbourExpirationTime : NHB_EXP_TIME
-neighbourCleanerTime : NHB_CLEAN_TIME
-testMode : false
+# neighbourExpirationTime : NHB_EXP_TIME
+# neighbourCleanerTime : NHB_CLEAN_TIME
+# testMode : false
 
 [Logger]
 filename : NODE_DIR/adtn.log
 level : LOG_LEVEL
 
 [Constants]
-timeout : TIMEOUT
+# timeout : TIMEOUT
 queueByteSize : QUEUE_SIZE
-processTimeout : 30
+# processTimeout : 30
 
 [BundleProcess]
 dataPath : NODE_DIR/Bundles/
@@ -192,8 +190,8 @@ EOF
 #---------------------------------------------------------------------
 check_running() {
   if [ ! -e ${pid_file} ] ; then
-	  echo "Error: it seems node ${node_id} is not running"
-	  exit 1
+	    echo "Error: it seems node ${node_id} is not running"
+	    exit 1
   fi
 }
 
@@ -231,14 +229,13 @@ send() {
   # echo \"$message\"
 
   init_dirs
-
   check_running
 
-  ip_src=$(cat $conf_file | grep nodeAddress | cut -d" " -f 3)
-  port_src=$(cat $conf_file | grep nodePort | cut -d" " -f 3)
+  ip_src=$(cat ${conf_file} | grep nodeAddress | cut -d" " -f 3)
+  port_src=$(cat ${conf_file} | grep nodePort | cut -d" " -f 3)
 
-  echo $adtnsend -i $ip_src -p $port_src -d $dst -m "$message" -s $node_id 
-  $adtnsend -i $ip_src -p $port_src -d $dst -m "$message" -s $node_id 
+  # echo $adtnsend -i ${ip_src} -p ${port_src} -d ${dst} -m "${message}" -s ${node_id}
+  ${adtnsend} -i ${ip_src} -p ${port_src} -d ${dst} -m "${message}" -s ${node_id} 
 }
 
 #---------------------------------------------------------------------
@@ -251,12 +248,10 @@ recv() {
   # echo Receiving file on node $node_id
 
   init_dirs
-
   check_running
 
-  ip_listen=$(cat $conf_file | grep listenerAddress | cut -d" " -f 3)
-  port_listen=$(cat $conf_file | grep listenerPort | cut -d" " -f 3)
+  ip_listen=$(cat ${conf_file} | grep listenerAddress | cut -d" " -f 3)
+  port_listen=$(cat ${conf_file} | grep listenerPort | cut -d" " -f 3)
   
-  echo $adtnrecv -i $ip_listen -p $port_listen -a $node_id
-  $adtnrecv -i $ip_listen -p $port_listen -a $node_id
+  ${adtnrecv} -i ${ip_listen} -p ${port_listen} -a ${node_id}
 }

@@ -1,29 +1,34 @@
 #!/bin/bash
 
 #---------------------------------------------------------------------
-# ADTNPlus adapter for lepton
+# aDTNPlus adapter for lepton
 #     
 #  Need the following variables to be set
 #	  - ADTNPLUS_HOME
 #	  - ADTNPLUS_ADAPTER_HOME
+#	  - ADTNPLUS_CONF
 #---------------------------------------------------------------------
 
-if [ -z $ADTNPLUS_HOME ]; then
-    echo "Error: \$ADTNPLUS_HOME is not defined."
+if [ -z ${ADTNPLUS_HOME} ]; then
+	echo "Error: \$ADTNPLUS_HOME is not defined."
 	exit 1
 fi
 
-if [ -z $ADTNPLUS_ADAPTER_HOME ]; then
+if [ -z ${ADTNPLUS_ADAPTER_HOME} ]; then
     echo "Error: \$ADTNPLUS_ADAPTER_HOME is not defined."
+    exit 1
+fi
+
+if [ -z ${ADTNPLUS_CONF} ]; then
+    echo "Error: \$ADTNPLUS_CONF is not defined."
     exit 1
 fi
 
 #---------------------------------------------------------------------
 # Variables used by LEPTON
 #---------------------------------------------------------------------
-#  Tags identifying the LEPTON process and a node process
-#lepton_process_tag="casa.lepton.leptond"
-node_process_tag=BundleAgent
+
+node_process_tag=BundleAgent # Tags identifying a node process
 
 # OppNetAdapter class name and classpath
 oppnet_adapter_classname=uab.senda.lepton.hub.AdtnPlus_Adapter
@@ -45,27 +50,28 @@ fi
 
 disc_addr=$lepton_host
 disc_port=4500
-	
+
 node_addr=$lepton_host
 list_addr=$lepton_host
 
-neighbour_expiration_time=4
-neighbour_cleaner_time=2
-
 log_level=6
-timeout=20
 queue_size="1M"
+processor=libaDTNPlus_FirstFwkBundleProcessor.so
+
+# neighbour_expiration_time=4
+# neighbour_cleaner_time=2
+# timeout=20
 # process_timeout=30
 
-processor=libaDTNPlus_FirstFwkBundleProcessor.so
+# ------------------------------------------------------------
+#  Load utility functions
+# ------------------------------------------------------------
+. ${ADTNPLUS_ADAPTER_HOME}/bin/util/adtn_functions.sh
 
 # ------------------------------------------------------------
 # Functions used by LEPTON: start_node() and stop_node() 
 # ------------------------------------------------------------
 
-. ${ADTNPLUS_ADAPTER_HOME}/bin/util/adtn_functions.sh
-
-#---------------------------------------------------------------------
 start_node() {
 	#
 	#  Start an aDTNPlus node
@@ -79,72 +85,51 @@ start_node() {
 	#  lepton_hub_port: TCP port number LEPTON's hub is listening to 
     #  disc_addr      : address to use for neighbor discovery (required)
     #  disc_port      : port number to use for neighbor discovery (required)
- 
- 	echo Starting node $node_id
 
- 	init_dirs
- 	init_vars
+	echo Starting node ${node_id}
 
- 	if [ ! -d $node_dir ]; then
- 		mkdir -p $node_dir
- 	fi
- 	if [ ! -d $node_dir/Bundles ]; then
- 		mkdir -p $node_dir/Bundles
- 	fi
- 	if [ ! -d $node_dir/Delivered ]; then
- 		mkdir -p $node_dir/Delivered
- 	fi
- 	# if [ ! -d $node_dir/Codes ]; then 
- 	# 	mkdir -p $node_dir/Codes
- 	# fi
- 	if [ ! -d $node_dir/Plugins ]; then
- 		mkdir -p $node_dir/Plugins
- 		# cp $ADTNPLUS_CONF/Plugins/* $node_dir/Plugins/
- 		cp $ADTNPLUS_CONF/Plugins/${processor} $node_dir/Plugins/
- 	fi
- 	if [ ! -d $node_dir/Trash/aggregation/reception ]; then
- 		mkdir -p $node_dir/Trash/aggregation/reception
- 	fi
- 	if [ ! -d $node_dir/Trash/aggregation/delivery ]; then
- 		mkdir -p $node_dir/Trash/aggregation/delivery
- 	fi
- 	if [ ! -d $node_dir/Trash/drop ]; then
- 		mkdir -p $node_dir/Trash/drop
- 	fi
+	init_dirs
+	init_vars
 
- 	gen_conf_file
- 	gen_nodeState_file
+	[[ ! -d $node_dir ]] && mkdir -p $node_dir
+	[[ ! -d $node_dir/Bundles ]] && mkdir -p $node_dir/Bundles
+	[[ ! -d $node_dir/Delivered ]] && mkdir -p $node_dir/Delivered
+	# [[ ! -d $node_dir/Codes ]] && mkdir -p $node_dir/Codes
+	if [ ! -d $node_dir/Plugins ]; then
+		mkdir -p $node_dir/Plugins
+		# cp $ADTNPLUS_CONF/Plugins/* $node_dir/Plugins/
+		cp ${ADTNPLUS_CONF}/Plugins/${processor} ${node_dir}/Plugins/
+	fi
+	[[ ! -d $node_dir/Trash/aggregation/reception ]] && mkdir -p $node_dir/Trash/aggregation/reception
+	[[ ! -d $node_dir/Trash/aggregation/delivery ]] && mkdir -p $node_dir/Trash/aggregation/delivery
+	[[ ! -d $node_dir/Trash/drop ]] && mkdir -p $node_dir/Trash/drop
+
+	gen_conf_file
+	gen_nodeState_file
 
     $adtnd ${conf_file} &
-  	echo $! > $pid_file
+	echo $! > $pid_file
 }
 
-#---------------------------------------------------------------------
 stop_node() {
 	#
 	#  Stop an aDTNPlus node
-	#
-	#  node_id: the id of the node (required)
+	#     node_id: the id of the node (required)
 
-    echo Stopping node $node_id
-
+    echo Stopping node ${node_id}
     init_dirs
 
     check_running
-
-  	pid=$(cat $pid_file) 
- 	kill $pid >& /dev/null
-  	# rm -f $pid_file
+	pid=$(cat $pid_file) 
+	kill $pid >& /dev/null
+	rm -f $pid_file
 }
 
-#---------------------------------------------------------------------
-#  Exec command on an aDTN node
-#
-#  node_id: the id of the node
-#  $*     : command (with arguments) to be executed on that node
-#---------------------------------------------------------------------
 exec_on_node() {
+	#  Exec command on an aDTN node
+	#     node_id: the id of the node (required)
+	#     $*     : command (with arguments) to be executed on that node
+    # echo Executing on ${node_id}: adtn.sh $*
 
-    echo "Executing on ${node_id}: adtn.sh $*"
-    node_id=$node_id $ADTNPLUS_ADAPTER_HOME/bin/adtn.sh $*
+    node_id=${node_id} ${ADTNPLUS_ADAPTER_HOME}/bin/adtn.sh $*
 }
