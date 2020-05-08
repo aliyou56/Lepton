@@ -55,7 +55,7 @@ object Main {
         println(" outputFile -> " + outputFile);
         var data = LogAnalyzer.process(leptonOutFilePath, dtnOutDirPath, isAdtn);
         File(outputFile).writeAll(data.toString);
-        // println("\n"+data);
+        println("\n"+data);
     }
 
     /**
@@ -289,15 +289,15 @@ object Main {
                             infos match {
                                 case pattern_create(msgId, src, dst) => { 
                                     data.global.sndEvents += 1; 
-                                    data.nodes(src).totalSnd += 1; 
-                                    data.nodes(dst).totalRcv += 1; 
+                                    if(data.nodes.contains(src)) data.nodes(src).totalSnd += 1; 
+                                    if(data.nodes.contains(dst)) data.nodes(dst).totalRcv += 1; 
                                     if(data.messages.contains(msgId)) 
                                         data.messages(msgId).sndTime = date 
                                     else
                                         data.messages += (msgId -> Message(msgId, src, dst, date, None, data.global.startTime))
                                 }
                                 case pattern_received(msgId, src, dst) => 
-                                    if(!map.contains(msgId)) { map += (msgId -> Tuple3(date, src, dst)) }
+                                    if(!map.contains(msgId)) map += (msgId -> Tuple3(date, src, dst))
                                 case _ =>
                             }
                         }
@@ -311,20 +311,16 @@ object Main {
                     line match {
                         case pattern_crt(strDate, msgId, src, dst) => {
                             data.global.sndEvents += 1
-                            data.nodes(src).totalSnd += 1;
+                            if(data.nodes.contains(src)) data.nodes(src).totalSnd += 1;
                             val date = LocalDateTime.parse(strDate, formatter);
-                            if(dst != "unknown"){
-                                data.nodes(dst).totalRcv += 1;
-                            }
+                            if(dst != "unknown") data.nodes(dst).totalRcv += 1;
                             if(data.messages.contains(msgId)) 
                                 data.messages(msgId).sndTime = date 
                             else
                                 data.messages += (msgId -> Message(msgId, src, dst, date, None, data.global.startTime))
                         } case pattern_rcv(strDate, msgId, src, dst) => {
                             val date = LocalDateTime.parse(strDate, formatter);
-                            if(!map.contains(msgId)){
-                                map += (msgId -> Tuple3(date, src, dst))
-                            }
+                            if(!map.contains(msgId)) map += (msgId -> Tuple3(date, src, dst))
                         }
                         case _ =>
                     }
@@ -343,8 +339,8 @@ object Main {
                                         buff.close
                                         if(!map.isEmpty) { // if at least one message is received
                                             for((msgId, (date, src, dst)) <- map) {
-                                                data.nodes(dst).nbRcv += 1;
                                                 data.global.rcvEvents += 1;
+                                                if(data.nodes.contains(dst)) data.nodes(dst).nbRcv += 1;
                                                 if(data.messages.contains(msgId)) 
                                                     data.messages(msgId).rcvTime = Some(date) 
                                                 else
