@@ -1,0 +1,59 @@
+graph {
+  fill-mode : none;
+}
+
+node {
+  fill-mode: plain; text-alignment: above; size: 8px; fill-color: red;
+}
+
+node.TAG {
+  stroke-mode: plain; stroke-color: green; stroke-width: 2;
+}
+
+node.OFFLINE {
+  fill-color: #808080;
+}
+
+edge {
+  shape: line; fill-mode: plain; size: 2px; fill-color: grey;
+}
+
+edge.CONNECTED {
+  size: 2px; fill-color: orange;
+}
+
+edge.TAG {
+  stroke-mode: plain; stroke-color: green; stroke-width: 2;
+}
+
+edge.on {
+    fill-mode: plain; fill-color: grey;
+}
+
+edge.hello {
+    fill-mode: plain; fill-color: grey; size: 2px;
+}
+
+edge.request {
+    fill-mode: plain; fill-color: grey; size: 2px;
+}
+
+edge.offer {
+    fill-mode: plain; fill-color: grey; size: 2px;
+}
+
+edge.profile {
+    fill-mode: plain; fill-color: grey; size: 2px;
+}
+
+edge.provide {
+    fill-mode: plain; fill-color: red; size: 3px; 
+}
+
+edge.off {
+    fill-mode: none; fill-color: grey;
+}
+
+node.CARRIER {
+    stroke-mode: plain; stroke-color: blue; stroke-width: 2;
+}
