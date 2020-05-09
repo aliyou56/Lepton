@@ -145,7 +145,7 @@ object Main {
         var sndTime : LocalDateTime, var rcvTime : Option[LocalDateTime] = None, 
         var leptonStartTime : LocalDateTime) extends Ordered[Message] {
         
-        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+        val formatter = DateTimeFormatter.ofPattern("HH:mm:ss")
 
         def sndStep : Long = ChronoUnit.MILLIS.between(leptonStartTime, sndTime)
         def rcvStep : Long = if(rcvTime.isDefined) ChronoUnit.MILLIS.between(leptonStartTime, rcvTime.get) else -1L
@@ -162,8 +162,8 @@ object Main {
             sb ++= f" ${sndStep}%10d" + " "*5
             sb ++= f" ${rcvStep}%10d" + " "*5
             sb ++= f" ${rcvDuration}%10d" + " "*10
-            sb ++= f" ${formatter.format(sndTime)}%19s" + " "*3
-            sb ++= f" ${if(rcvTime.isDefined) formatter.format(rcvTime.get)}%19s"
+            sb ++= f" ${formatter.format(sndTime)}%8s" + " "*3
+            sb ++= f" ${if(rcvTime.isDefined) formatter.format(rcvTime.get)}%8s"
             sb.toString
         }
     }
@@ -185,9 +185,9 @@ object Main {
             sb ++= "\n"
 
             sb ++= "[Messages]" + "\n"
-            sb ++= "-"*150 + "\n"
-            sb ++= " "*8 + "MessageId" + " "*13 + "src" + " "*11 + "dst" + " "*9 + "sndStep" + " "*9 + "rcvStep" + " "*8 + "rcvDuration (s)" + " "*7 + "sndDateTime"  + " "*16 + "rcvDateTime" +"\n"
-            sb ++= "-"*150 + "\n"
+            sb ++= "-"*125 + "\n"
+            sb ++= " "*8 + "MessageId" + " "*13 + "src" + " "*11 + "dst" + " "*9 + "sndStep" + " "*9 + "rcvStep" + " "*8 + "rcvDuration (s)" + " "*4 + "sndTime"  + " "*5 + "rcvTime" +"\n"
+            sb ++= "-"*125 + "\n"
             messages.values.toList.sorted.foreach( x => sb ++= x + "\n" ) 
             sb.toString;
         }
