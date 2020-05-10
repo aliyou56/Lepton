@@ -62,15 +62,20 @@ object Main {
      * This class represents the global information section. It computes the duration of an experiment based on the
      * given starTime and the EndTime of Lepton.
      * 
-     *   startTime   : the lepton start time.
-     *   endTime     : the lepton end time (date of the last recorded event by lepton)
-     *   activeNodes : the number of active nodes
-     *   sndEvents   : the total number of messages sent by all nodes during an experiment
-     *   rcvEvents   : the total number of messages received by all nodes during an experiment
+     *   startTime        : the lepton start time.
+     *   endTime          : the lepton end time (date of the last recorded event by lepton)
+     *   activeNodes      : the number of active nodes
+     *   sndEvents        : the total number of messages sent by all nodes during an experiment
+     *   rcvEvents        : the total number of messages received by all nodes during an experiment
+     *   minRcvDuration   : the minimum rcvDuration of all received messages during an experiment
+     *   maxRcvDuration   : the maximum rcvDuration of all received messages during an experiment
+     *   totalRcvDuration : the sum of all messages' rcvDuration during an experiment
      */
     case class Global(var startTime : LocalDateTime = LocalDateTime.now, 
         var endTime : LocalDateTime = LocalDateTime.now,
-        var activeNodes : Int = 0, var sndEvents : Int = 0, var rcvEvents : Int = 0) {
+        var activeNodes : Int = 0, var sndEvents : Int = 0, var rcvEvents : Int = 0, 
+        var minRcvDuration : Long = -1L, var maxRcvDuration : Long = -1L, var totalRcvDuration : Long = 0L) {
+
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
 
         def duration = ChronoUnit.SECONDS.between(startTime, endTime)
@@ -83,6 +88,8 @@ object Main {
             sb ++= "  active nodes      : "+ activeNodes + "\n"
             sb ++= "  messages sent     : "+ sndEvents +" \n"
             sb ++= "  messages received : "+ rcvEvents + " ("+ Try((rcvEvents*100)/sndEvents).getOrElse(0) +"%)"+ "\n"
+            sb ++= "  messages lost     : "+ (sndEvents - rcvEvents) +" \n"
+            sb ++= "  rcv duration (s)  : "+ minRcvDuration +", "+ maxRcvDuration +", "+ Try(totalRcvDuration/rcvEvents).getOrElse(0) +" (min, max, avg)" +" \n"
             sb ++= "\n"
             sb.toString
         }
@@ -92,21 +99,25 @@ object Main {
      * This class contains information about a Node.
      *
      *   nodeId            : the node identifier.
-     *   activityStartTime : date of the first activity of a node (first beacon)
-     *   activityEndTime   : date of the last activity of a node
-     *   totalSnd          : the total number of messages sent by a node
-     *   totalRcv          : the total number of messages sent to a node
+     *   activityStartTime : date of the first activity of a node (first beacon).
+     *   activityEndTime   : date of the last activity of a node.
+     *   totalSnd          : the total number of messages sent by a node.
+     *   totalRcv          : the total number of messages sent to a node.
      *   nbRcv             : the number of effective messages received by a node.
-     *   minNbNeighbors    : the minimum  number of neighbor with which the node interact at a given moment
+     *   minNbNeighbors    : the minimum  number of neighbor with which the node interact at a given moment.
      *   maxNbNeighbors    : the maximum  number of neighbor with which the node interact at a given moment.
-     *   outConnection     : the number connections initiated by a node
+     *   outConnection     : the number connections initiated by a node.
      *   inConnection      : the number of connection received by a node.
+     *   minRcvDuration    : the minimum rcvDuration of a node.
+     *   maxRcvDuration    : the maximum rcvDuration of a node.
+     *   totalRcvDuration  : the sum of rcvDuration of all messages received by a node.
      */
     case class Node(var nodeId : String, var activityStartTime : Option[LocalDateTime] = None, 
         var activityEndTime : Option[LocalDateTime] = None,
         var totalSnd : Int = 0, var totalRcv : Int = 0, var nbRcv : Int = 0, 
         var minNbNeighbors : Int = 0, var maxNbNeighbors : Int = 0,
-        var outConnection : Int = 0, var inConnection : Int = 0
+        var outConnection : Int = 0, var inConnection : Int = 0,
+        var minRcvDuration : Long = -1L, var maxRcvDuration : Long = -1L, var totalRcvDuration : Long = 0L
     ) extends Ordered [Node] {
 
         def activityDuration : Long = ChronoUnit.SECONDS.between(
@@ -114,16 +125,19 @@ object Main {
             activityEndTime.getOrElse(LocalDateTime.now)
         )
 
+        def avgRcvDuration : Long = Try(totalRcvDuration/nbRcv).getOrElse(0)
+
         override def toString : String = {
             var sb = new StringBuilder
-            sb ++= f" ${nodeId}%10s" + " "*6
-            sb ++= f" ${activityDuration}%5d" + " "*9
-            sb ++= f" ${totalSnd}%3d" + " "*8
+            sb ++= f" ${nodeId}%10s" + " "*4
+            sb ++= f" ${activityDuration}%5d" + " "*8
+            sb ++= f" ${totalSnd}%3d" + " "*7
             sb ++= f" ${nbRcv}%3d/${totalRcv}" + " "*7
             sb ++= f" ${minNbNeighbors}%2d" + " "*6
-            sb ++= f" ${maxNbNeighbors}%2d" + " "*7
-            sb ++= f" ${outConnection}%5d" + " "*6
-            sb ++= f" ${inConnection}%5d"
+            sb ++= f" ${maxNbNeighbors}%2d" + " "*5
+            sb ++= f" ${outConnection}%5d" + " "*3
+            sb ++= f" ${inConnection}%5d" + " "*3
+            sb ++= f" (${minRcvDuration}, ${maxRcvDuration}, ${avgRcvDuration})" 
             sb.toString
         }
 
@@ -160,8 +174,8 @@ object Main {
             sb ++= f" ${src}%10s" + " "*3
             sb ++= f" ${dst}%10s" + " "*3
             sb ++= f" ${sndStep}%10d" + " "*5
-            sb ++= f" ${rcvStep}%10d" + " "*5
-            sb ++= f" ${rcvDuration}%10d" + " "*10
+            sb ++= f" ${rcvStep}%10d" + " "*2
+            sb ++= f" ${rcvDuration}%10d" + " "*9
             sb ++= f" ${formatter.format(sndTime)}%8s" + " "*3
             sb ++= f" ${if(rcvTime.isDefined) formatter.format(rcvTime.get)}%8s"
             sb.toString
@@ -178,15 +192,15 @@ object Main {
             sb ++= global.toString
 
             sb ++= "[Nodes]" + "\n"
-            sb ++= "-"*95 + "\n"
-            sb ++= "    NodeId      duration (s)    sndEvts   nbRcv/total    minNhb   maxNhb     outCon       inCon" + "\n"
-            sb ++= "-"*95 + "\n"
+            sb ++= "-"*105 + "\n"
+            sb ++= " "*4+ "NodeId" +" "*4+ "duration (s)" +" "*3+ "sndEvts" +" "*3+ "nbRcv/total" +" "*3+ "minNhb" +" "*3+ "maxNhb" +" "*3+ "outCon" +" "*4+ "inCon" +" "*3+ "rcvDuration (s)" + "\n"
+            sb ++= "-"*105 + "\n"
             nodes.values.toList.sorted.foreach( x => sb ++= x + "\n"  )
             sb ++= "\n"
 
             sb ++= "[Messages]" + "\n"
             sb ++= "-"*125 + "\n"
-            sb ++= " "*8 + "MessageId" + " "*13 + "src" + " "*11 + "dst" + " "*9 + "sndStep" + " "*9 + "rcvStep" + " "*8 + "rcvDuration (s)" + " "*4 + "sndTime"  + " "*5 + "rcvTime" +"\n"
+            sb ++= " "*8 + "MessageId" + " "*13 + "src" + " "*11 + "dst" + " "*9 + "sndStep" + " "*9 + "rcvStep" + " "*5 + "rcvDuration (s)" + " "*3 + "sndTime"  + " "*5 + "rcvTime" +"\n"
             sb ++= "-"*125 + "\n"
             messages.values.toList.sorted.foreach( x => sb ++= x + "\n" ) 
             sb.toString;
@@ -361,9 +375,36 @@ object Main {
                 println("job done [Nodes]")
             }
             
+            // Compute some statistics
+            def computeStatistics() = {
+                for(msg <- data.messages.values) {
+                    if(msg.rcvDuration >= 0 && data.nodes.contains(msg.dst)) {
+                        data.nodes(msg.dst).totalRcvDuration += msg.rcvDuration
+                        val min = data.nodes(msg.dst).minRcvDuration
+                        if(min == -1 || min > msg.rcvDuration) {
+                            data.nodes(msg.dst).minRcvDuration = msg.rcvDuration
+                        }
+                        if(data.nodes(msg.dst).maxRcvDuration < msg.rcvDuration) {
+                            data.nodes(msg.dst).maxRcvDuration = msg.rcvDuration
+                        }
+                        data.global.totalRcvDuration += msg.rcvDuration
+                    }
+                }
+                for(node <- data.nodes.values) {
+                    val min = data.global.minRcvDuration
+                    if( min == -1 || min > node.minRcvDuration ) {
+                        data.global.minRcvDuration = node.minRcvDuration
+                    }
+                    if( data.global.maxRcvDuration < node.maxRcvDuration ) {
+                        data.global.maxRcvDuration = node.maxRcvDuration
+                    }
+                }
+            }
+
             processLeptonOut
             processNodesLog
             data.global.activeNodes = data.nodes.size
+            computeStatistics
             data
         }
     }
