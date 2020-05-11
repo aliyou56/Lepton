@@ -4,11 +4,7 @@ script_dir=$(realpath $(dirname $0))
 
 if [ -z ${main_dir} ]; then
     main_dir=${LEPTON_HOME}
-    if [[ "${LEPTON_VAR}" != "" ]]; then
-        current_dir=$(pwd)
-        cd ${LEPTON_VAR}/../../ && main_dir=$(pwd)
-        cd ${current_dir}
-    fi
+    [[ "${LEPTON_VAR}" != "" ]] && main_dir=$(dirname $(dirname ${LEPTON_VAR}))
 fi
 
 if [ $# -ne 1 ] ; then
@@ -28,4 +24,5 @@ if [ ! -d ${adtn_out_dir} ]; then
     exit 1
 fi
 
-scala ${script_dir}/libs/logAnalyzer.jar ${lepton_out_file} ${adtn_out_dir} adtn $1
+output_file=$1
+scala ${script_dir}/libs/logAnalyzer.jar ${lepton_out_file} ${adtn_out_dir} adtn ${output_file}

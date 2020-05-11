@@ -1,6 +1,11 @@
-#!/bin/bah
+#! /bin/bash
 
-script_dir=$(realpath $(dirname $0))
+if [ $# -ne 1 ] ; then
+    echo "usage: $0 <adapter_home>"
+    exit 1
+fi
+adapter_home=$1
+echo "adapter_home -> ${adapter_home}"
 
 echo Setting aDTNPlus environment variables ...
 
@@ -8,17 +13,20 @@ ret=$(cat ~/.$(basename $SHELL)rc | grep ADTNPLUS | wc -l)
 
 if [ $ret -ne 0 ] ; then
     echo aDTNPlus environment variables are already set.
-    exit 1
+    exit 2
 fi
 
-echo "adapter_home -> ${script_dir}"
+if [ ! -d ${adapter_home} ]; then 
+    echo "Can't find adapter_home -> ${adapter_home}"
+    exit 3
+fi
 
 cat << EOF >> ~/.$(basename $SHELL)rc
 #
 # aDTNPlus environment variables
-export ADTNPLUS_HOME="/home/${USER}/adtnPlus/usr/local"
-export ADTNPLUS_CONF="/home/${USER}/adtnPlus/var/lib/adtnPlus" 
-export ADTNPLUS_ADAPTER_HOME="${script_dir}"
+export ADTNPLUS_HOME="${HOME}/adtnPlus/usr/local"
+export ADTNPLUS_CONF="${HOME}/adtnPlus/var/lib/adtnPlus" 
+export ADTNPLUS_ADAPTER_HOME="${adapter_home}"
 export PATH="\${PATH}:\${ADTNPLUS_HOME}/bin"
 export LD_LIBRARY_PATH="\${LD_LIBRARY_PATH}:\${ADTNPLUS_HOME}/lib"
 #

@@ -46,16 +46,16 @@
 #include "Utils/globals.h"
 #include "Node/JsonFacades/BundleStateJson.h"
 #include "Utils/Functions.h"
- 
+
 #ifdef LEPTON
 #include <exception>
 #include <stdexcept>
 #include <algorithm>
 #include <cstdlib>
 #include <ctime>
-#include "Bundle/BundleInfo.h"
-#include "adtnPlus/Json.h"
-#include "adtnPlus/Worker.h" 
+#include "Bundle/BundleInfo.h" 
+#include "Utils/Json.h"
+#include "Node/Executor/Worker.h" 
 const uint64_t g_timeFrom2000 = 946684800;
 using json = nlohmann::json;
 #endif

@@ -18,14 +18,11 @@ fi
 
 # parent directory for output
 main_dir=${LEPTON_HOME}
-if [[ "${LEPTON_VAR}" != "" ]]; then
-    current_dir=$(pwd)
-    [[ -d ${LEPTON_VAR} ]] && mkdir -p ${LEPTON_VAR}
-    cd ${LEPTON_VAR}/../../ && main_dir=$(pwd)
-    cd ${current_dir}
-fi
-echo "[run_adtn]: main_dir      -> ${main_dir}"
+[[ "${LEPTON_VAR}" != "" ]] && main_dir=$(dirname $(dirname ${LEPTON_VAR}))
+echo "[run_adtn]: main_dir     -> ${main_dir}"
+
 # clean output 
+rm -r ${main_dir}/output/lepton/* 2> /dev/null 
 rm -r ${main_dir}/output/adtn/* 2> /dev/null 
 
 # init port number management  
@@ -55,12 +52,22 @@ if [ ! -f ${conf_file} ]; then # if the configuration file not found
     time_margin=10 
     make_edges=true
 
+    if [ ! -f ${dgs} ]; then
+        echo " Error: dgs file not found -> ${dgs}"
+        exit 2
+    fi
+    if [ ! -f ${hist} ]; then
+        echo " Error: hist file not found -> ${dgs}"
+        exit 2
+    fi
+
     lepton_params+="in_dgs=$dgs in_hist=$hist time_margin=$time_margin make_edges=$make_edges show=$show"
 else
     lepton_params+="conf=${conf_file}"    
 fi
 
 lepton_params+=" oppnet_adapter=${ADTNPLUS_ADAPTER_HOME}/bin/adapter.sh"
+echo ""
 echo "lepton_params -> $lepton_params"
 echo ""
 
@@ -68,19 +75,22 @@ echo ""
 lepton.sh start ${lepton_params} &
 
 sleep 10s # 
-# runnig app scenario
+# # runnig app scenario
 in_aevt=${scenario_dir}/${scenario}.aevt
 ${script_dir}/util/run_app_scenario_adtn.sh ${in_aevt} &
 
 duration=1665 # duration of the simulation
 
+output_dir=${scenario_dir}/result
+[[ ! -d ${output_dir} ]] && mkdir -p ${output_dir}
+
 # running the performance tracker
-${script_dir}/util/performance_tracker.sh BundleAgent ${duration} ${scenario_dir}/result &
+# ${script_dir}/util/performance_tracker.sh BundleAgent ${duration} ${output_dir} &
 
 sleep ${duration}s # waiting for the end of the simulation
 lepton.sh stop # stop Lepton
 
 echo ""
 # Analize adtn nodes output logs
-output_file=${scenario_dir}/result/${scenario}-out.txt
+output_file=${output_dir}/${scenario}-out-adtn.txt
 ${script_dir}/util/analyze_log_adtn.sh ${output_file}

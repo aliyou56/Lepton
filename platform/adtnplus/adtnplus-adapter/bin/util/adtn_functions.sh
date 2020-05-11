@@ -10,11 +10,7 @@ init_dirs () {
   # 
 
 	dir=${LEPTON_HOME} 
-  if [[ "${LEPTON_VAR}" != "" ]]; then
-    current_dir=$(dirname $0)
-    cd ${LEPTON_VAR}/../../ && dir=$(pwd)
-    cd ${current_dir}
-  fi
+  [[ "${LEPTON_VAR}" != "" ]] && dir=$(dirname $(dirname ${LEPTON_VAR}))
 	base_dir=${dir}/output/adtn
 	node_dir=${base_dir}/${node_id}
 	pid_file=${node_dir}/pid
@@ -29,13 +25,7 @@ init_vars () {
   #  
   # use lockfile command (from procmail paquet -> sudo apt install procmail)
 
-  # DEFAULT_START_PORT=40000
-
 	port_dir="/run/shm/tmp"
-	# if [ ! -d $port_dir ]; then
-	# 	mkdir -p $port_dir
-	# 	echo $DEFAULT_START_PORT > $port_dir/port_aux
-	# fi
 
 	lockfile -1 -r-1 -l3 ${port_dir}/port_aux.lock ### Semaphore port_aux
 
@@ -45,35 +35,9 @@ init_vars () {
   list_port=${START_PORT_ACCEPT} 
   ((++START_PORT_ACCEPT))
   echo $START_PORT_ACCEPT > ${port_dir}/port_aux
-  # next_port; node_port=${START_PORT_ACCEPT} 
-  # next_port; list_port=${START_PORT_ACCEPT} 
-  # next_port; echo $START_PORT_ACCEPT > ${port_dir}/port_aux
-	
+
 	rm -f ${port_dir}/port_aux.lock              ### end Semaphore port_aux
 }
-
-#---------------------------------------------------------------------
-# next_port() {
-#   #
-#   # Get the next free port number and put it into START_PORT_ACCEPT 
-#   #
-#   # START_PORT_ACCEPT:  
-
-#   if [ $START_PORT_ACCEPT -gt 65535 ] ; then
-#     let START_PORT_ACCEPT=$DEFAULT_START_PORT
-#   fi
-
-#   $(nc -z 127.0.0.1 $START_PORT_ACCEPT)
-#   ret=$?
-#   while [ $ret -eq 0 ]; do
-#     ((++START_PORT_ACCEPT))
-#     $(nc -z 127.0.0.1 $START_PORT_ACCEPT); let ret=$?
-
-#     if [ $START_PORT_ACCEPT -gt 65535 ] ; then
-#       let START_PORT_ACCEPT=$DEFAULT_START_PORT
-#     fi
-#   done
-# }
 
 #---------------------------------------------------------------------
 gen_conf_file() {
@@ -234,7 +198,7 @@ send() {
   ip_src=$(cat ${conf_file} | grep nodeAddress | cut -d" " -f 3)
   port_src=$(cat ${conf_file} | grep nodePort | cut -d" " -f 3)
 
-  # echo $adtnsend -i ${ip_src} -p ${port_src} -d ${dst} -m "${message}" -s ${node_id}
+  echo $adtnsend -i ${ip_src} -p ${port_src} -d ${dst} -m "${message}" -s ${node_id}
   ${adtnsend} -i ${ip_src} -p ${port_src} -d ${dst} -m "${message}" -s ${node_id} 
 }
 
