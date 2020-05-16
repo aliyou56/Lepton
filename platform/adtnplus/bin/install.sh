@@ -51,10 +51,4 @@ if [[ ! -d ${adapter_dir} ]]; then
     exit 2
 fi
 
-adapater_lib_dir=${adapter_dir}/libs/
-cd ${src_dir}/Lepton
-make
-[[ ! -d ${adapater_lib_dir} ]] && mkdir -p ${adapater_lib_dir}
-yes | cp -f ${src_dir}/Lepton/target/*.jar ${adapater_lib_dir}
-
 ${script_dir}/set_adtnplus_env_var.sh ${adapter_dir}
