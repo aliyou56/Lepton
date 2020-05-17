@@ -65,27 +65,18 @@ sleep 10s
 irbdtn_scenario_params=${scenario_dir}/${scenario}.aevt
 echo "irbdtn scenario params : $irbdtn_scenario_params"
 
-${LEPTON_HOME}/util/run_scenario_ibrdtn.sh $irbdtn_scenario_params &
+${LEPTON_HOME}/tools/bin/util/run_app_scenario_ibrdtn.sh $irbdtn_scenario_params &
 echo
-echo "${LEPTON_HOME}/util/run_scenario_ibrdtn.sh $irbdtn_scenario_params &"
+echo "${LEPTON_HOME}/tools/bin/util/run_app_scenario_ibrdtn.sh $irbdtn_scenario_params &"
 echo 
 # Temps jusqu'a la fin de la simulation
 
 duration=1670 
-
-#Performance
-if [ ! -d "$LEPTON_HOME/perf" ];
-then
-    mkdir "$LEPTON_HOME/perf"
-fi
-
-#$LEPTON_HOME/util/performance_tracker.sh dtnd ${duration} $LEPTON_HOME/perf &
 
 #Temps du scénario
 sleep ${duration}s
 
 lepton.sh clean
 echo "lepton : clean"
-
 
 exit 0

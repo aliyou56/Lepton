@@ -29,15 +29,15 @@ mv ${LEPTON_HOME}/*.dgs ${LEPTON_HOME}/result/$folderResult/lepton
 echo "Début des traitements des résultats"
 echo
 
-~/moiGit/ibrDTN/Analyse/toLog.sh ${LEPTON_HOME}/result/$folderResult/ibrdtn
-
-python moiGit/ibrDTN/Analyse/log_ibrdtn_out_to_log_adtn.py ${LEPTON_HOME}/result/$folderResult/lepton/lepton.out
-python moiGit/ibrDTN/Analyse/modificateurDeLog.py lepton/result/$folderResult/ibrdtn/
+${LEPTON_HOME}/tools/bin/util/toLog.sh ${LEPTON_HOME}/result/$folderResult/ibrdtn
+python ${LEPTON_HOME}/tools/bin/util/log_ibrdtn_out_to_log_adtn.py ${LEPTON_HOME}/result/$folderResult/lepton/lepton.out
+python ${LEPTON_HOME}/tools/bin/util/modificateurDeLog.py lepton/result/$folderResult/ibrdtn/
 mv ${LEPTON_HOME}/newLogNodesOflepton ${LEPTON_HOME}/result/$folderResult
-cd scalaTest/
+cd ${LEPTON_HOME}/tools/bin/util/logAnalyser/src/main/scala/
+scalac LogAnalyser.scala
 scala Main ${LEPTON_HOME}/result/$folderResult/lepton/lepton.outToAdtn.out ${LEPTON_HOME}/result/$folderResult/newLogNodesOflepton ibrdtn
-cd ~/
-mv scalaTest/output.txt ${LEPTON_HOME}/result/$folderResult
+cd ${LEPTON_HOME}
+mv tools/bin/util/logAnalyser/src/main/scala/output.txt ${LEPTON_HOME}/result/$folderResult
 
 echo "Fin des traitements des résultats"
 echo
