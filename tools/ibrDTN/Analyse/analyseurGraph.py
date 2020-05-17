@@ -116,8 +116,8 @@ eventGlobal = False
 eventNodes = False
 eventMessages = False
 
-
-#path="adhocnet-out.txt"
+countUnknownMessage = 0
+#path="output.txt"
 path=sys.argv[1]
 with io.open(path, mode='r', buffering=-1, encoding=None, errors=None, newline=None, closefd=True) as f:
     for line in f:
@@ -152,24 +152,33 @@ with io.open(path, mode='r', buffering=-1, encoding=None, errors=None, newline=N
                 objGlobal.setMessagesReceived(rmSpace(line.split(":")[1]))
             
         elif eventNodes:
-            if not "(" in line and not ")" in line:
+            #print(line.replace("\n",""))
+            if not "NodeId" in line:
                 argOfLine = re.sub("[ ]{2,}",",",line.replace("\n","")).split(",")
-                if len(argOfLine) == 9:
+                #print(len(argOfLine))
+                if len(argOfLine) == 12 or len(argOfLine) == 9:
+                    #print(argOfLine)
                     newObjNode = Node(argOfLine[1],argOfLine[2],argOfLine[3],argOfLine[4],argOfLine[5],argOfLine[6],argOfLine[7],argOfLine[8])
                     listNode.append(newObjNode)
                 
         elif eventMessages:
-            if not "(" in line and not ")" in line:
+            if "unknown" in line:
+                countUnknownMessage+=1
+                continue
+            elif "-1" in line:
+                countUnknownMessage+=1
+                continue
+            elif not "(" in line and not ")" in line:
                 argOfLine = re.sub("[ ]{2,}",",",line.replace("\n","")).split(",")
-                if len(argOfLine) == 7:
-                    #print(argOfLine)
+                #print(len(argOfLine))
+                if len(argOfLine) == 9:
                     newObjMessage = Message(argOfLine[1],argOfLine[2],argOfLine[3],argOfLine[4],argOfLine[5],argOfLine[6])
                     listMessage.append(newObjMessage)
 
 
-print(len(listNode)-1)
-print(len(listMessage)-1)
-
+print(len(listNode))
+print(len(listMessage))
+print("Unknown Message : "+str(countUnknownMessage))
 
 s=0
 c=0
@@ -181,10 +190,14 @@ for i in listNode:
 for i in listMessage:
    c+=1
    s+=int(i.getRcvDuration())
+   
+print(s)
+print(c)
 print("------------------------")
 print("La durée moyenne de réception est de "+str(int(s/c)) + " secondes ("+str(s/c)+")" )
 print("Le nombre de messages non reçu est de "+str(p))
 print("------------------------")
+
 
 
 
@@ -202,10 +215,12 @@ def graphBar(size,barWidth,bars1,r1,listText,label,barColor,legende):
     plt.title(t)
     plt.xlabel(xl)
     plt.ylabel(yl)
+    plt.tight_layout()
+    plt.savefig(legende[0])
     plt.show()
 
 
-def graphBar1(size,barWidth,bars1,r1,listText,barColor,label,legende):
+def graphBar1(size,barWidth,bars1,r1,listText,barColor,label,legende,boolean):
     t,xl,yl = legende
     plt.figure(figsize=size)
     plt.bar(r1, bars1, width = barWidth, color = barColor)
@@ -218,6 +233,10 @@ def graphBar1(size,barWidth,bars1,r1,listText,barColor,label,legende):
     plt.title(t)
     plt.xlabel(xl)
     plt.ylabel(yl)
+    plt.tight_layout()
+    if boolean == True:
+        plt.ylim(0,105)
+    plt.savefig(legende[0])
     plt.show()
     
 
@@ -261,6 +280,7 @@ plt.xlabel("Noeud destinataire")
 plt.ylabel("Durée moyenne")
 plt.title("Durée moyenne de réception de chaque noeud ")
 plt.grid()
+plt.savefig("Durée moyenne de réception de chaque noeud")
 plt.show()
 
 
@@ -278,6 +298,7 @@ for i in listNodeSort:
 xx = list(listGraph2.keys())
 yy = list(listGraph2.values())
 
+
 plt.figure(figsize=(10,5))
 u, ind = np.unique(xx, return_inverse=True)
 plt.plot(ind, yy)
@@ -288,6 +309,7 @@ plt.xlabel("Noeud Source")
 plt.ylabel("Durée moyenne")
 plt.title("Durée moyenne d'envoi de chaque noeud ")
 plt.grid()
+plt.savefig("Durée moyenne d'envoi de chaque noeud")
 plt.show()
 
 
@@ -301,7 +323,7 @@ for i in listNodeSort:
             
 xx = list(listGraph3.keys())
 yy = list(listGraph3.values())
-graphBar1((10,5),0.9,yy,[1,2,3,4,5,6,7,8,9,10],listNodeSort,"lightskyblue",yy,("Durée d'activité de chaque noeud","Noeud","Durée d'activité"))
+graphBar1((10,5),0.9,yy,[1,2,3,4,5,6,7,8,9,10],listNodeSort,"lightskyblue",yy,("Durée d'activité de chaque noeud","Noeud","Durée d'activité"),False)
 
 
 
@@ -332,6 +354,8 @@ plt.subplots_adjust(bottom= 0.2, top = 0.98)
 plt.xlabel("Noeud")
 plt.ylabel("Nombre de connexion initiée")
 plt.title("Nombre de connexions d'entrées et de sorties initiées par chaque noeud")
+plt.tight_layout()
+plt.savefig("Nombre de connexions d'entrées et de sorties initiées par chaque noeud")
 plt.show()
 
 
@@ -349,7 +373,7 @@ for i in list(listGraph6.values()):
     t = i.split("/")
     yy.append(int((int(t[0])/int(t[1]))*100))
 
-graphBar1((10,5),0.9,yy,[1,2,3,4,5,6,7,8,9,10],listNodeSort,"slategray",yy,("Pourcentage des messages reçus pour chaque noeud","Noeud","Pourcentage des messages reçus"))
+graphBar1((10,5),0.9,yy,[1,2,3,4,5,6,7,8,9,10],listNodeSort,"slategray",yy,("Pourcentage des messages reçus pour chaque noeud","Noeud","Pourcentage des messages reçus"),True)
 
 
 
@@ -381,7 +405,16 @@ plt.ylabel("Nombre de voisin")
 plt.title("Nombre de voisin par noeud")
 plt.legend()
 plt.grid()
+plt.savefig("Nombre de voisin par noeud")
 plt.show()
+
+
+
+
+
+
+
+
 
 
 

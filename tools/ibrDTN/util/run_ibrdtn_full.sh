@@ -50,7 +50,7 @@ fi
 
 
 
-#lepton_params+=" oppnet_adapter=${IBRDTN_ADAPTER_HOME}/bin/adapter.sh"
+lepton_params+=" oppnet_adapter=${IBRDTN_ADAPTER_HOME}/bin/adapter.sh"
 echo "lepton_params : $lepton_params"
 echo 
 
@@ -58,7 +58,7 @@ echo
 lepton.sh start $lepton_params &
 
 # Du délais
-sleep 11s
+sleep 10s
 
 # Démarage du scénario applicatif
 #cd ${LEPTON_HOME}/util/
@@ -71,7 +71,7 @@ echo "${LEPTON_HOME}/util/run_scenario_ibrdtn.sh $irbdtn_scenario_params &"
 echo 
 # Temps jusqu'a la fin de la simulation
 
-duration=1665 
+duration=1670 
 
 #Performance
 if [ ! -d "$LEPTON_HOME/perf" ];
@@ -86,22 +86,6 @@ sleep ${duration}s
 
 lepton.sh clean
 echo "lepton : clean"
-
-# Copie des résultats dans ${LEPTON_HOME}/result
-folderOut="/dev/shm/$USER/lepton/"
-folderOutResult="${LEPTON_HOME}/result/$1"
-mkdir "${LEPTON_HOME}/result/$1"
-#cp -r $folderOut $folderOutResult
-folderOutirbdtn="/dev/shm/$USER/ibrdtn/"
-cp -r $folderOutirbdtn $folderOutResult
-mv $folderOutResult "${LEPTON_HOME}/result/$(date)_$1"
-for i in ls -p | grep -v /
-do
-    echo $i
-done
-
-
-
 
 
 exit 0

@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 
 """
 Description: Le script permet de transformer les données des journaux de logs des nœuds, pour 
@@ -113,11 +113,13 @@ path = sys.argv[1]
 
 for i in os.listdir(path):
     #print(i)
-    for idNode in glob.glob("*.log"):
+    for idNode in glob.glob(path+i+os.path.sep+"*.log"):
         #print(idNode)   
-        fullPath=path+os.path.sep+i+os.path.sep+idNode
+        fullPath=idNode
+        #print(fullPath)
         with io.open(fullPath, mode='r', buffering=-1, encoding=None, errors=None, newline=None, closefd=True) as f:
             for line in f:
+                #print(line.replace("\n",""))
                 if "BundleCore: Bundle received" in line:
                     bundleEventbundle.append(line)
                     if "(local)" in line:
@@ -127,10 +129,10 @@ for i in os.listdir(path):
                             argOfLine = line.split(" ")
                             #print(argOfLine)
                             
-                            idMsg = argOfLine[10].replace("[","").replace("]","")
+                            idMsg = argOfLine[9].replace("[","").replace("]","")
                             #print(idMsg)
 
-                            idNodeOfLine = argOfLine[11].replace("dtn://","").split("/")
+                            idNodeOfLine = argOfLine[10].replace("dtn://","").split("/")
                             #print(idNodeOfLine)
                             
                             if idNodeOfLine[1] != "":
@@ -157,14 +159,14 @@ for i in os.listdir(path):
                             #print(line.replace("\n",""))
                             argOfLine = line.split(" ")
                             #print(argOfLine)
-                            tab = argOfLine[10].replace("dtn://","").split("/")
+                            tab = argOfLine[9].replace("dtn://","").split("/")
                             #print(tab)
                             idMsg = tab[1]
                             #print(idMsg)
                             crt = tab[0]
                             #print(crt)
                             if crt == "" or idMsg == "":
-                                print("ohhhhhhhhhhhhhhh")
+                                print("Erreur : FATAL")
                             obj = Message(idMsg,crt,i)
                             #obj=crt+","+i
                             if addToMapOject(idMsg,obj,mapOfBundleEvent_IdMesg_creator_dst) == False:
@@ -226,9 +228,9 @@ for i in os.listdir(path):
     #print(pathNewLogNode)
     fileNode = open(pathNewLogNode,"a")
 
-    for idNode in glob.glob("*.log"):
+    for idNode in glob.glob(path+i+os.path.sep+"*.log"):
         #print(idNode)   
-        fullPath=path+os.path.sep+i+os.path.sep+idNode
+        fullPath=idNode
         with io.open(fullPath, mode='r', buffering=-1, encoding=None, errors=None, newline=None, closefd=True) as f:
             for line in f:
                 if "BundleCore: Bundle received" in line:
@@ -239,14 +241,14 @@ for i in os.listdir(path):
                             #print(line.replace("\n",""))
                             tabOfArg = line.split(" ")
                             #print(tabOfArg)
-                            dayNumber = tabOfArg[3]
+                            dayNumber = tabOfArg[2]
                             if len(dayNumber) == 1:
                                 dayNumber = "0"+dayNumber
-                            date = makeGoodDate(tabOfArg[1],dayNumber,tabOfArg[4],tabOfArg[5])
+                            date = makeGoodDate(tabOfArg[1],dayNumber,tabOfArg[3],tabOfArg[4])
                             info = "CREATE"
                             crt = ""
                             dst = ""
-                            tabOfArgNameAndId = tabOfArg[11].replace("dtn://","").split("/")
+                            tabOfArgNameAndId = tabOfArg[10].replace("dtn://","").split("/")
                             #print(tabOfArgNameAndId)
                             #print("i : "+i)
                             if tabOfArgNameAndId[0] == i:
@@ -283,13 +285,13 @@ for i in os.listdir(path):
                             countW2+=1
                             tabOfArg = line.split(" ")
                             #print(tabOfArg)
-                            dayNumber = tabOfArg[3]
+                            dayNumber = tabOfArg[2]
                             if len(dayNumber) == 1:
                                 dayNumber = "0"+dayNumber
-                            date = makeGoodDate(tabOfArg[1],dayNumber,tabOfArg[4],tabOfArg[5])
+                            date = makeGoodDate(tabOfArg[1],dayNumber,tabOfArg[3],tabOfArg[4])
                             info = "RECEIVE"
                             dst = i
-                            tabOfArgNameAndId = tabOfArg[10].replace("dtn://","").split("/")
+                            tabOfArgNameAndId = tabOfArg[9].replace("dtn://","").split("/")
                             #print(tabOfArgNameAndId)
                             idM = tabOfArgNameAndId[1]
                             crt = tabOfArgNameAndId[0]

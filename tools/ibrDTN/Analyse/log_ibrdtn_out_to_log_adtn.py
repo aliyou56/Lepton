@@ -1,6 +1,5 @@
-#!/usr/bin/env python3
-
 # -*- coding: utf-8 -*-
+
 
 """
     Description : Script permettant de convertir les logs ibrdtns vers des logs adtns. (lepton.out)
@@ -26,7 +25,7 @@ fichier = open(sys.argv[1]+"ToAdtn.out", "a")
 with io.open(sys.argv[1], mode='r', buffering=-1, encoding=None, errors=None, newline=None, closefd=True) as f:
     for line in f:
         if "hub ibrdtn: << source=" in line:
-            print("NON")
+            #print("NON")
             continue
         elif "IPND_Beacon" in line:
             old=line.split(" ")
