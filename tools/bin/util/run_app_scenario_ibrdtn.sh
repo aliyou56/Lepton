@@ -26,5 +26,6 @@ grep " snd " $evt_file | while read time action sdr dst mid ; do
         sleep $wait
     fi
     echo $mid >tmp/$mid.txt
+    lepton.sh exec $dst recv &
     lepton.sh exec $sdr send $dst tmp/$mid.txt
 done
