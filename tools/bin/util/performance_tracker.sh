@@ -37,7 +37,11 @@ do
     echo x=$i >> ${out_file}
     ps o pid,%cpu,%mem,command ax | grep ${tag_name} | while read psLine; do
         # take into account only ADTN nodes process
-        [[ $psLine == *"/bin/BundleAgent"* ]] && echo $psLine >> ${out_file}
+        if [[ "${tag_name}" == "BundleAgent" ]]; then
+            [[ $psLine == *"/bin/BundleAgent"* ]] && echo $psLine >> ${out_file}
+        else
+            [[ $psLine == *"/sbin/dtnd"* ]] && echo $psLine >> ${out_file}
+        fi    
     done
 done
 
