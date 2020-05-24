@@ -23,8 +23,8 @@
 \begin{document}
 
 \begin{titlepage}
-    \begin{sffamily}
-        \begin{center}
+  \begin{sffamily}
+  \begin{center}
 
 %----------------------------------------------------------------------------------------
 %	LOGO SECTION
@@ -66,7 +66,7 @@
     \begin{minipage}{.59\textwidth}
         \begin{flushright} \large
             \emph{Tuteur :} M. Frédéric Guidec \\
-            \emph{Responsable :} M. Frederic Raimbault \\
+            \emph{Responsable :} M. Frédéric Raimbault \\
         \end{flushright}
     \end{minipage}
     
@@ -160,11 +160,9 @@ Il a été testé avec succès sur la famille des processeurs x86,  mais égalem
 
 Le code source et les différents packages de distributions sont disponibles sur la  page du projet ibrDTN (GitHub).
 
-
 \section {Démarche et réalisation}
 
 \subsection {Recherche des scenarios (mobilité/applicatif)}
-
 
 Pour évaluer les performances des implémentations, il est important d'avoir une application fonctionnant au-dessus du réseau.
 Sur conseil de notre tuteur nous avons limité notre recherche à la plateforme CRAWDAD qui recueille des données récoltées ou générées à propos des réseaux sans fil.
@@ -305,9 +303,10 @@ Le scénario applicatif utilisé a été généré aléatoirement à partir du f
 
 Les données sont séparées en trois groupes correspondant aux 4 variantes du même paramètre. Nous avons ainsi extrait des données pour des périodes de diffusion d'annonces de 5, 10, 30 et 40 secondes.
 
+
 \subsection {Période de beaconing : 5 secondes}
 
-Premièrement, commençons par l’analyse de recherche de voisin(s) fixée à 5 secondes. Du côté de aDTN, nous avons uniquement 23\% de messages reçus contre 94\% du côté d’ibrDTN. La durée moyenne de réception des messages quant à elle est de 18 secondes pour aDTN et de 73 secondes pour ibrDTN. Ces données sont complétées avec la figure \ref{fig:05_avg_rcv_duration}, qui présente la durée moyenne pour chacun des nœuds. La durée moyenne de réception pour aDTN est inférieure à 40 secondes. Tandis que pour ibrDTN elle est supérieure à 40 secondes. \par
+Premièrement, commençons par l’analyse de période de beaconing fixée à 5 secondes. Du côté de aDTN, nous avons uniquement 23\% de messages reçus contre 99\% du côté d’ibrDTN. La durée moyenne de réception des messages quant à elle est de 18 secondes pour aDTN et de 23 secondes pour ibrDTN. Ces données sont complétées avec la figure \ref{fig:05_avg_rcv_duration}, qui présente la durée moyenne pour chacun des nœuds. La durée moyenne de réception pour aDTN est inférieure à 40 secondes. Tandis que pour ibrDTN elle est supérieure à 40 secondes.\par
 
 \begin{figure}[h!]
     \centering
@@ -317,7 +316,7 @@ Premièrement, commençons par l’analyse de recherche de voisin(s) fixée à 5
     \label{fig:05_avg_rcv_duration}
 \end{figure}
 
-La figure \ref{fig:05_avg_snd_duration}, représente la durée moyenne d’envoi de chaque nœud. Celle-ci se situe en dessous de 60 secondes pour aDTN alors que pour ibrDTN elle toujours supérieure à 40 secondes. Ces différents résultats confirment bien pour l’instant les moyennes annoncées plus haut. Ainsi, l’envoi et la réception de messages est plus rapide pour les nœuds de aDTN que pour ceux de ibrDTN. Or, il faut faire attention, car les nœuds de ibrDTN ont envoyé beaucoup plus de messages que ceux de aDTN. En effet, il y a seulement moins d’un quart des messages qui ont été envoyées par aDTN contrairement à ibrDTN. Ainsi, il est normal que la moyenne des messages reçus et envoyés soit plus basse pour aDTN.\par
+La figure \ref{fig:05_avg_snd_duration}, représente la durée moyenne d’envoi de chaque nœud. Celle-ci se situe en dessous de 60 secondes pour les deux systèmes étudiés. Or, il faut faire attention, car les nœuds de ibrDTN ont envoyé beaucoup plus de messages que ceux de aDTN. En effet, il y a seulement moins d’un quart des messages qui ont été envoyées par aDTN contrairement à ibrDTN. Ainsi, la moyenne des messages reçus et envoyés est plus fiable pour ibrDTN.\par
 
 \begin{figure}[h!]
     \centering
@@ -337,7 +336,7 @@ La figure \ref{fig:05_nb_neighbors} présente le nombre maximal et minimal de vo
     \label{fig:05_nb_neighbors}
 \end{figure}
 
-La figure \ref{fig:05_msg_rcv} présente les pourcentages des messages reçus pour chaque nœud. Nous pouvons observer une grande différence, car les nœuds d’ibrDTN reçoivent 100\% des messages comparés à ceux de aDTN, qui ont des pourcentages variés, avec au plus bas 7\% et 35\% au plus haut.\par
+La figure \ref{fig:05_msg_rcv} présente les pourcentages des messages reçus pour chaque nœud. Nous pouvons observer une grande différence, car les nœuds d’ibrDTN reçoivent quasiment tous 100\% des messages comparés à ceux de aDTN, qui ont des pourcentages variés, avec au plus bas 7\% et 35\% au plus haut. Cependant, il faut prendre en compte le nombre de messages non reçus global qui est de 3 pour ibrDTN contre 343 pour aDTN.\par
 
 \begin{figure}[h!]
     \centering
@@ -347,11 +346,9 @@ La figure \ref{fig:05_msg_rcv} présente les pourcentages des messages reçus po
     \label{fig:05_msg_rcv}
 \end{figure}
 
-Il faut faire attention pour ibrDTN car on pourrait penser qu’il reçoit 100\% des messages, or ce n’est pas le cas. Ce résultat provient du traitement des données, de l'extraction et des soucis pour connaître le créateur du message. Il faut plutôt prendre en compte le nombre de messages non reçus global qui est de 25 contre 343 pour aDTN.\par
 
-
-\subsection {Période de beaconing : 10 secondes}
-Deuxièmement, nous nous sommes intéressés à la recherche de voisin(s) fixée à 10 secondes. Nous remarquons que aDTN reçoit 51\% des messages envoyés alors que ibrDTN en reçoit 94\%. Ainsi, la durée moyenne de réception des messages est de 37 secondes pour aDTN contre 75 secondes pour ibrDTN. Nous pouvons comparer ces moyennes par rapport à la figure \ref{fig:10_avg_rcv_duration} qui présente la durée moyenne de réception des messages par nœud. Pour aDTN, les durées moyennes sont inférieures à 80 secondes alors que pour ibrDTN, elles sont supérieures à 50 secondes. Ainsi, les durées de réception sont, en moyenne, plus élevées pour ibrDTN que pour aDTN.\par
+\subsection {Période de beaconing: 10 secondes}
+Deuxièmement, nous nous sommes intéressés à la période de beaconing fixée à 10 secondes. Nous remarquons que aDTN reçoit 51\% des messages envoyés alors que ibrDTN en reçoit 98\%. Ainsi, la durée moyenne de réception des messages est de 37 secondes pour aDTN contre 25 secondes pour ibrDTN. Nous pouvons comparer ces moyennes par rapport à la figure \ref{fig:10_avg_rcv_duration} qui présente la durée moyenne de réception des messages par nœud. Pour aDTN, les durées moyennes sont inférieures à 80 secondes alors que pour ibrDTN, elles sont inférieures à 50 secondes. Ainsi, les durées de réception sont, en moyenne, plus faibles pour ibrDTN que pour aDTN.\par
 
 \begin{figure}[h!]
     \centering
@@ -361,7 +358,7 @@ Deuxièmement, nous nous sommes intéressés à la recherche de voisin(s) fixée
     \label{fig:10_avg_rcv_duration}
 \end{figure}
 
-Il est également intéressant de regarder les résultats de la durée moyenne d'envoi de chaque nœud, observable en figure \ref{fig:10_avg_snd_duration}. Les résultats oscillent, pour la majorité des nœuds, entre 20 et 40 secondes du côté de aDTN. Pour ibrDTN, la durée moyenne se situe principalement entre 50 et 100 secondes, soit toujours supérieure à celle de aDTN. Cependant, il faut tenir compte que ibrDTN envoie près du double de messages, et qu’ainsi il y a plus de valeurs, ce qui peut expliquer des moyennes plus élevées. \par
+Il est également intéressant de regarder les résultats de la durée moyenne d'envoi de chaque nœud, observable en figure \ref{fig:10_avg_snd_duration}. Les résultats oscillent, pour la majorité des nœuds, entre 20 et 40 secondes du côté de aDTN. Pour ibrDTN, la durée moyenne se situe principalement entre 15 et 30 secondes, soit presque toujours inférieure à celle de aDTN. Cependant, il faut tenir compte que ibrDTN envoie près du double de messages. \par
 
 \begin{figure}[h!]
     \centering
@@ -381,7 +378,7 @@ La figure \ref{fig:10_nb_neighbors} montre le nombre de voisin(s) par nœud. Ces
     \label{fig:10_nb_neighbors}
 \end{figure}
 
-Les diagrammes en barres de la figure \ref{fig:10_msg_rcv}, fournissent les pourcentages des messages reçus pour chaque nœud. Nous pouvons voir une grande différence, car les nœuds d’ibrDTN reçoivent 100\% des messages comparés à ceux de aDTN. Ce dernier système, reçoit quant à lui un nombre très variable de messages en fonction des différents nœuds. Au plus bas, il reçoit 36\% des messages et au maximum il reçoit 73\%. En ce qui concerne ibrDTN, comme expliqué précédemment, nous nous intéressons plutôt au nombre de messages transmis et non reçus. Ainsi, ibrDTN a 25 messages non reçus contre 215 pour aDTN. Par conséquent, ibrDTN reçoit tout de même 9 fois plus de messages.\par
+Les diagrammes en barres de la figure \ref{fig:10_msg_rcv}, fournissent les pourcentages des messages reçus pour chaque nœud. Nous pouvons voir une grande différence, car les nœuds d’ibrDTN reçoivent quasiment 100\% des messages comparés à ceux de aDTN. Ce dernier système, reçoit quant à lui un nombre très variable de messages en fonction des différents nœuds. Au plus bas, il reçoit 36\% des messages et au maximum il reçoit 73\%. En ce qui concerne ibrDTN, nous nous intéressons aussi au nombre de messages transmis et non reçus. Ainsi, ibrDTN a 5 messages non reçus contre 215 pour aDTN. Par conséquent, ibrDTN reçoit tout de même 43 fois plus de messages.\par
 
 \begin{figure}[h!]
     \centering
@@ -393,7 +390,8 @@ Les diagrammes en barres de la figure \ref{fig:10_msg_rcv}, fournissent les pour
 
 
 \subsection {Période de beaconing : 30 secondes}
-Troisièmement, nous explorons les résultats avec une recherche de voisin(s) fixée à 30 secondes. Tout d’abord, nous avons une moyenne de réception des messages de 68 secondes pour aDTN contre 97 pour ibrDTN. Le nombre de messages reçus est de 98\% pour aDTN et de 90\% pour ibrDTN. Nous pouvons nous intéresser aux graphiques de la figure \ref{fig:30_avg_rcv_duration}, qui montrent la durée moyenne de réception de chaque nœud. Nous remarquons que, pour aDTN, cette valeur moyenne ne dépasse globalement pas les 80 secondes contrairement à ibrDTN. En effet, pour celui-ci, la durée moyenne de réception des messages est supérieure à 60 secondes et atteint même 150 secondes pour les nœuds dmis01 et dmis18.\par
+
+Troisièmement, nous explorons les résultats avec une période de beaconing fixée à 30 secondes. Tout d’abord, nous avons une moyenne de réception des messages de 68 secondes pour aDTN contre 42 pour ibrDTN. Le nombre de messages reçus est de 98\% pour aDTN et de 96\% pour ibrDTN. Nous pouvons nous intéresser aux graphiques de la figure \ref{fig:30_avg_rcv_duration}, qui montrent la durée moyenne de réception de chaque nœud. Nous remarquons que, pour aDTN, cette valeur moyenne est comprise globalement entre 50 et 80 secondes contrairement à ibrDTN où elle est comprise entre 25 et 50 secondes. Pour ibrDTN, la durée moyenne de réception des messages est inférieure à celle de aDTN.\par
 
 \begin{figure}[h!]
     \centering
@@ -403,7 +401,7 @@ Troisièmement, nous explorons les résultats avec une recherche de voisin(s) fi
     \label{fig:30_avg_rcv_duration}
 \end{figure}
 
-Les courbes représentant la durée moyenne d’envoi de chaque message par nœud de la figure \ref{fig:30_avg_snd_duration}, montrent une certaine différence. En effet, cette durée oscille entre 40 et 80 secondes pour aDTN et 60 et 100 pour le second. Par ailleurs, pour trois nœuds de ibrDTN, il est possible de noter que la durée moyenne est largement plus élevée (supérieure à 135 secondes). La même remarque peut être faite pour le nœud dmis01 du système aDTN.\par
+Les courbes représentant la durée moyenne d’envoi de chaque message par nœud de la figure \ref{fig:30_avg_snd_duration}, montrent une certaine différence. En effet, cette durée oscille entre 40 et 80 secondes pour aDTN et 30 et 40 pour le second. Par ailleurs, pour deux nœuds de ibrDTN, il est possible de noter que la durée moyenne est plus élevée (supérieure à 60 secondes). La même remarque peut être faite pour le nœud dmis01 du système aDTN (supérieure à 160 secondes).\par
 
 \begin{figure}[h!]
     \centering
@@ -423,7 +421,7 @@ La figure \ref{fig:30_nb_neighbors}, représente le nombre maximal et minimal de
     \label{fig:30_nb_neighbors}
 \end{figure}
 
-Les diagrammes barres de la figure \ref{fig:30_msg_rcv}, montrent les pourcentages des messages reçus pour chaque nœud. Nous pouvons voir une grande similitude, car les nœuds de aDTN et de ibrDTN, reçoivent quasiment tous 100\% des messages. En revanche, il ne faut pas oublier que du côté de ibrDTN, ces résultats sont biaisés. Ainsi, il faut se référer au nombre exact de messages non reçus qui est de 6 pour aDTN et de 41 pour ibrDTN. Nous remarquons donc que cette fois aDTN est plus efficace que ibrDTN.\par
+Les diagrammes barres de la figure \ref{fig:30_msg_rcv}, montrent les pourcentages des messages reçus pour chaque nœud. Nous pouvons voir une grande similitude, car les nœuds de aDTN et de ibrDTN, reçoivent quasiment tous 100\% des messages. Il est possible de se référer au nombre exact de messages non reçus qui est de 6 pour aDTN et de 17 pour ibrDTN. Nous remarquons donc que cette fois aDTN est plus efficace que ibrDTN.\par
 
 \begin{figure}[h!]
     \centering
@@ -436,9 +434,9 @@ Les diagrammes barres de la figure \ref{fig:30_msg_rcv}, montrent les pourcentag
 
 \subsection {Période de beaconing : 40 secondes}
 
-Finalement, nous nous sommes intéressés à la recherche de voisin(s) fixée à 40 secondes. Nous remarquons que aDTN reçoit 96\% des messages envoyés alors que ibrDTN en reçoit 93\%. La durée moyenne de réception des messages est de 80 secondes pour aDTN contre 123 secondes pour ibrDTN. Nous pouvons comparer ces moyennes par rapport à la figure \ref{fig:40_avg_rcv_duration} qui présente la durée moyenne de réception des messages par nœud.\par
+Finalement, nous nous sommes intéressés à la période de beaconing fixée à 40 secondes. Nous remarquons que aDTN reçoit 96\% des messages envoyés alors que ibrDTN en reçoit 95\%. La durée moyenne de réception des messages est de 80 secondes pour aDTN contre 59 secondes pour ibrDTN. Nous pouvons comparer ces moyennes par rapport à la figure \ref{fig:40_avg_rcv_duration} qui présente la durée moyenne de réception des messages par nœud.\par
 
-Sur les graphiques de la figure \ref{fig:40_avg_rcv_duration}, on constate que la durée de réception des messages est majoritairement inférieure à 100 secondes pour aDTN. Concernant le second système, les durées moyennes sont principalement supérieures à 100 secondes. Le nœud dmis01 présente une moyenne plus élevée par rapport aux autres nœuds, pour les deux systèmes. Les durées moyennes de réception sont resserrées dans un intervalle de 50 secondes pour les deux systèmes étudiés (entre 50 et 100 secondes pour aDTN et 100 et 150 pour ibrDTN). \par
+Sur les graphiques de la figure \ref{fig:40_avg_rcv_duration}, on constate que la durée de réception des messages est majoritairement inférieure à 100 secondes pour aDTN. Concernant le second système, les durées moyennes sont principalement inférieures à 80 secondes. Le nœud dmis01 présente une moyenne plus élevée par rapport aux autres nœuds, pour les deux systèmes. Les durées moyennes de réception sont resserrées dans un intervalle de 50 secondes pour les deux systèmes étudiés (entre 50 et 100 secondes pour aDTN et 30 et 80 pour ibrDTN). \par
 
 \begin{figure}[h!]
     \centering
@@ -448,7 +446,7 @@ Sur les graphiques de la figure \ref{fig:40_avg_rcv_duration}, on constate que l
     \label{fig:40_avg_rcv_duration}
 \end{figure}
 	
-D’autre part, il est également intéressant de regarder les résultats de la durée moyenne d'envoi de chaque nœud, en figure \ref{fig:40_avg_snd_duration}. Les résultats montrent que la durée moyenne d'envoi de chaque nœud oscille sur un intervalle compris entre près de 60 à 100 secondes du coté aDTN, avec néanmoins, une durée proche de 120 secondes. En ce qui concerne ibrDTN, l’intervalle se situe entre 75 et 200 secondes. Ainsi, du côté de ibrDTN on a 60\% des moyennes par nœud qui sont à plus de 100 secondes contre 10\% pour aDTN.\par
+D’autre part, il est également intéressant de regarder les résultats de la durée moyenne d'envoi de chaque nœud, en figure \ref{fig:40_avg_snd_duration}. Les résultats montrent que la durée moyenne d'envoi de chaque nœud oscille sur un intervalle compris entre près de 60 à 100 secondes du coté aDTN, avec néanmoins, une durée proche de 120 secondes. En ce qui concerne ibrDTN, l’intervalle se situe entre presque 40 et 80 secondes. Ainsi, du côté de ibrDTN on a 70\% des moyennes par nœud qui sont à moins de 60 secondes contre 10\% pour aDTN.\par
 
 \begin{figure}[h!]
     \centering
@@ -458,7 +456,7 @@ D’autre part, il est également intéressant de regarder les résultats de la 
     \label{fig:40_avg_snd_duration}
 \end{figure}
 
-Les courbes de la figure \ref{fig:40_nb_neighbors} présentent le Nombre de voisins par nœud. Celles-ci permettent d'observer que le nombre de voisin(s) minimal est le même pour aDTN et ibrDTN et il est de 1. Le nombre de voisins des nœuds de aDTN est compris entre 5 et 8. Tandis que pour ibrDTN, ce nombre varie entre 4 et 8 voisins.
+Les courbes de la figure \ref{fig:40_nb_neighbors} présentent le nombre de voisin(s) par nœud. Celles-ci permettent d'observer que le nombre de voisin(s) minimal est le même pour aDTN et ibrDTN et il est de 1. Le nombre de voisins maximal des nœuds de aDTN est compris entre 5 et 8. Tandis que pour ibrDTN, ce nombre varie entre 4 et 8 voisins.
 
 \begin{figure}[h!]
     \centering
@@ -468,7 +466,7 @@ Les courbes de la figure \ref{fig:40_nb_neighbors} présentent le Nombre de vois
     \label{fig:40_nb_neighbors}
 \end{figure}
 
-La figure \ref{fig:40_msg_rcv}, affiche les pourcentages des messages reçus pour chaque nœud. Nous pouvons, ainsi, voir une grande similitude, car les nœuds de aDTN reçoivent quasiment 100\% des messages, alors que ceux de ibrDTN reçoivent tous 100\% des messages. Mais, comme expliqué auparavant, ce graphique n’est pas exploitable pour ibrDTN. Par conséquent, nous regardons plutôt le nombre de messages transmis et non reçus. Nous remarquons que ibrDTN n’a pas reçu 31 messages alors que seulement 14 messages ne sont pas arrivés du côté de aDTN, soit moitié moins que ibrDTN.
+La figure \ref{fig:40_msg_rcv}, montre les pourcentages des messages reçus pour chaque nœud. Nous pouvons, ainsi, voir une grande similitude, car les nœuds aDTN et ibrDTN reçoivent quasiment 100\% des messages. Cependant en regardant plutôt le nombre de messages transmis et non reçus on peut remarquer que ibrDTN n’a pas reçu 21 messages alors que seulement 14 messages ne sont pas arrivés du côté d'aDTN, soit un tiers de moins que ibrDTN.
 
 \begin{figure}[h!]
     \centering
@@ -483,10 +481,15 @@ La figure \ref{fig:40_msg_rcv}, affiche les pourcentages des messages reçus pou
 %----------------------------------------------------------------------------
 
 \section{Conclusion}
-Pour conclure, on peut en effet dire que les deux systèmes aDTN et ibrDTN, sont un peu différents. Malgré le fait qu’ils implémentent tous deux le même protocole, ils ont chacun leurs spécificités.\par
-En effet, l'étude nous a montré, que aDTN semble être moins performant sur les périodes de découverte de nœuds voisins élevées. Il apparaît au vu des résultats obtenus (figures \ref{fig:05_nb_neighbors_adtn}, \ref{fig:10_nb_neighbors_adtn}, \ref{fig:30_nb_neighbors_adtn} et \ref{fig:40_nb_neighbors_adtn}) que sa recherche de voisins est tout de même quasiment toujours inférieure à celle de ibrDTN. aDTN supporte ainsi beaucoup moins les périodes de découverte de nœuds voisins élevées. En effet, le taux d’envoi de messages est vraiment différent entre une période fixée à 5 secondes et une autre fixée à 30 secondes. Par conséquent, il passe de 23\% de messages envoyés à 96\%, soit un taux de transmission de messages quatre fois plus élevé. Mais, il faut bien noter que les temps de réception des messages avec des périodes élevées sont tout de même intéressants. Ce système met trois fois moins de temps pour réceptionner les messages avec une période élevée, par rapport à une période faible, où il reçoit pratiquement tous les messages. Cela peut tout de même être intéressant si son utilisation autorise beaucoup de perte.\par
-Concernant l’implémentation de ibrDTN, elle fait en sorte de supporter une recherche élevée de voisins. Cependant, sa réaction par rapport à des périodes de recherche de voisins faibles, montre une performance moindre. En effet, il reçoit moins de messages lorsque la recherche est faible par rapport à une recherche élevée. Les pourcentages de réception des messages le concernant, le prouve, avec 94\%, 94\%, 90\% et 93\% pour des paramètres respectifs de 5, 10, 30 et 40 secondes.\par
-Globalement, ibrDTN obtient de meilleures performances pour des recherches de voisins élevées tandis que aDTN est plus en adéquation avec des recherches de voisins faibles. Ainsi, les deux systèmes sont généralement différents.
+Les systèmes aDTN et ibrDTN ont chacun leurs spécificités malgré le fait qu’ils implémentent tous deux le même protocole.
+En effet, il apparaît, au vu des résultats obtenus, qu'aDTN a une moindre performance sur les périodes de diffusion d'annonces courtes (période de beaconing de 5 et 10 secondes). Les figures \ref{fig:05_nb_neighbors_adtn}, \ref{fig:10_nb_neighbors_adtn}, \ref{fig:30_nb_neighbors_adtn} et \ref{fig:40_nb_neighbors_adtn} montrent que le nombre maximal de voisins d'un nœud à un instant donné est quasiment toujours inférieure à celui de ibrDTN. Le système aDTN supporte ainsi beaucoup moins les périodes de beaconing courtes. D'un autre coté, le taux de recéption de messages est différent entre une période de beaconing fixée à 5 secondes et une autre fixée à 30 secondes. Par conséquent, il passe de 23\% de messages reçus à 96\%, soit un taux de réception de messages quatre fois plus élevé. \par
+
+Concernant l’implémentation de ibrDTN, elle supporte bien les périodes de diffusion d'annonces courtes. Cependant, sa réaction par rapport à des périodes grandes, montre une performance moindre. En effet, il reçoit moins de messages lorsque cette période est grande par rapport à une période courte. Les pourcentages de réception des messages illustrent bien cette tendance avec 99\%, 98\%, 96\% et 95\% pour des périodes respectives de 5, 10, 30 et 40 secondes. \par
+Par ailleurs, ibrDTN obtient des durées de réception de messages plus faibles qu'aDTN. Pour des périodes de beaconing grandes (30 et 40 secondes), cette période reste inférieure à celle d'aDTN. Même s'il reçoit moins de messages, ibrDTN peut tout de même être intéressant si son utilisation autorise beaucoup de perte. \par
+
+D'une manière globale, contrairement à aDTN,  ibrDTN obtient de meilleures performances avec des périodes de beaconing courtes. Cependant les deux systèmes ont des résultats assez semblables avec des périodes grandes. 
+
+En perspective, on peut approfondir cette comparaison entre les deux systèmes en agissant sur d'autres paramètres.
 
 
 %----------------------------------------------------------------------------
