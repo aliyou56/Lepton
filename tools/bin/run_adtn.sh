@@ -33,7 +33,7 @@ echo "40000" > ${port_dir}/port_aux # 40000 -> starting port number for adtn nod
 #####################################
 
 scenario=$1
-scenario_dir=${LEPTON_HOME}/scenario/${scenario}
+scenario_dir="${LEPTON_HOME}/scenario/${scenario}"
 conf_file="${scenario_dir}/lepton.conf"
 echo "[run_adtn]: scenario     -> ${scenario}"    
 echo "[run_adtn]: scenario_dir -> ${scenario_dir}"    
@@ -75,13 +75,14 @@ echo ""
 lepton.sh start ${lepton_params} &
 
 sleep 10s # 
-# # runnig app scenario
-in_aevt=${scenario_dir}/${scenario}.aevt
+
+# runnig app scenario
+in_aevt="${scenario_dir}/${scenario}.aevt"
 ${script_dir}/util/run_app_scenario_adtn.sh ${in_aevt} &
 
 duration=1665 # duration of the simulation
 
-output_dir=${scenario_dir}/result
+output_dir="${scenario_dir}/result/adtn"
 [[ ! -d ${output_dir} ]] && mkdir -p ${output_dir}
 
 # running the performance tracker
@@ -93,4 +94,5 @@ lepton.sh stop # stop Lepton
 echo ""
 # Analize adtn nodes output logs
 output_file=${output_dir}/${scenario}-out-adtn.txt
-${script_dir}/util/analyze_log_adtn.sh ${output_file}
+${script_dir}/util/analyze_log.sh adtn ${outp
+ut_file}
