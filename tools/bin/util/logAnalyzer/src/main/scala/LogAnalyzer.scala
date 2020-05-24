@@ -291,7 +291,8 @@ object Main {
                 println("processing Nodes logs -> " + dtnOutDirPath + " ...")
 
                 val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-                val logFileName = if(isAdtn) "adtn.log" else "log.log"
+                // val logFileName = if(isAdtn) "adtn.log" else "log.log"
+                val logFileName = if(isAdtn) "adtn.log" else "log"
 
                 def adtnLineProcessor(line : String, map : Map[String, Tuple3[LocalDateTime, String, String]]) {
                     val pattern_main = """\[(\d{4}-\d\d-\d\d \d\d:\d\d:\d\d)\]\[.*\]\[.*\]\[.*\] - (.*)""".r;
@@ -319,22 +320,54 @@ object Main {
                     }
                 }
 
+                // def ibrdtnLineProcessor(line : String, map : Map[String, Tuple3[LocalDateTime, String, String]]) {
+                //     val pattern_crt = """CREATE,(.*),(.*),(.*),(.*)""".r
+                //     val pattern_rcv = """RECEIVE,(.*),(.*),(.*),(.*)""".r
+                //     line match {
+                //         case pattern_crt(strDate, msgId, src, dst) => {
+                //             data.global.sndEvents += 1
+                //             if(data.nodes.contains(src)) data.nodes(src).totalSnd += 1;
+                //             val date = LocalDateTime.parse(strDate, formatter);
+                //             if(dst != "unknown") data.nodes(dst).totalRcv += 1;
+                //             if(data.messages.contains(msgId)) 
+                //                 data.messages(msgId).sndTime = date 
+                //             else
+                //                 data.messages += (msgId -> Message(msgId, src, dst, date, None, data.global.startTime))
+                //         } case pattern_rcv(strDate, msgId, src, dst) => {
+                //             val date = LocalDateTime.parse(strDate, formatter);
+                //             if(!map.contains(msgId)) map += (msgId -> Tuple3(date, src, dst))
+                //         }
+                //         case _ =>
+                //     }
+                // }
+
                 def ibrdtnLineProcessor(line : String, map : Map[String, Tuple3[LocalDateTime, String, String]]) {
-                    val pattern_crt = """CREATE,(.*),(.*),(.*),(.*)""".r
-                    val pattern_rcv = """RECEIVE,(.*),(.*),(.*),(.*)""".r
+                    val f = DateTimeFormatter.ofPattern("EEE LLL dd HH:mm:ss yyyy")
+                    val pattern_main = """(\w{3} \w{3} \d\d \d\d:\d\d:\d\d \d{4}) NOTICE (.+)""".r;
+                    // BundleCore: Bundle received [643508374.1] dtn://dmis01/lyVaPJHHrFcmNJwA dst=dtn://dmis08 (local)
+                    val pattern_create = """BundleCore: Bundle received \[\d+.\d+\] dtn://(\w+)/((?!routing)\w+) dst=dtn://(\w+) \(local\)""".r; 
+                    // BundleCore: singleton bundle delivered: [643042232.1] dtn://dmis05/xWNEkiNXvTSpSYYd
+                    val pattern_received = """BundleCore: singleton bundle delivered: \[\d+.\d+\] dtn://(\w+)/((?!routing)\w+) dst=dtn://(\w+)""".r; 
+                    
                     line match {
-                        case pattern_crt(strDate, msgId, src, dst) => {
-                            data.global.sndEvents += 1
-                            if(data.nodes.contains(src)) data.nodes(src).totalSnd += 1;
-                            val date = LocalDateTime.parse(strDate, formatter);
-                            if(dst != "unknown") data.nodes(dst).totalRcv += 1;
-                            if(data.messages.contains(msgId)) 
-                                data.messages(msgId).sndTime = date 
-                            else
-                                data.messages += (msgId -> Message(msgId, src, dst, date, None, data.global.startTime))
-                        } case pattern_rcv(strDate, msgId, src, dst) => {
-                            val date = LocalDateTime.parse(strDate, formatter);
-                            if(!map.contains(msgId)) map += (msgId -> Tuple3(date, src, dst))
+                        case pattern_main(strDate, infos) => {
+                            val date = LocalDateTime.parse(strDate, f);
+                            infos match {
+                                case pattern_create(src, msgId, dst) => { 
+                                    data.global.sndEvents += 1; 
+                                    if(data.nodes.contains(src)) data.nodes(src).totalSnd += 1; 
+                                    if(data.nodes.contains(dst)) data.nodes(dst).totalRcv += 1; 
+                                    if(data.messages.contains(msgId)) {
+                                        data.messages(msgId).sndTime = date 
+                                    } else {
+                                        data.messages += (msgId -> Message(msgId, src, dst, date, None, data.global.startTime))
+                                    }
+                                }
+                                case pattern_received(src, msgId, dst) => {
+                                    if(!map.contains(msgId)) map += (msgId -> Tuple3(date, src, dst))
+                                }
+                                case _ =>
+                            }
                         }
                         case _ =>
                     }
