@@ -76,23 +76,16 @@ void BundleProcessor::processBundles() {
   g_startedThread++;
   while (!g_stop.load()) {
     uint32_t oldValue;
-    // LOG(6) << " * First while : oldValue=" << oldValue; // TODO 
     while (((oldValue = g_queueProcessEvents) > 0) && !g_stop.load()) {
       uint32_t queueSize = m_bundleQueue->getSize();
       uint32_t i = 0;
-      // LOG(6) << " ** Second while : queueSize=" << queueSize << ", i=" << i; // TODO
       while (i < queueSize && !g_stop.load()) {
-        // LOG(6) << " *** Third while : processTimeout=" << m_config.getProcessTimeout() 
-        // << " queueSize=" << queueSize << ", i=" << i
-        //      << ", g_queueProcessEvents=" << g_queueProcessEvents; // TODO
         try { 
           LOG(60) << "Checking for bundles in the queue";
           m_bundleQueue->wait_for(m_config.getProcessTimeout());
           std::unique_ptr<BundleContainer> bc = m_bundleQueue->dequeue();
           if (!processBundle(std::move(bc))) {
             g_queueProcessEvents++;
-            // LOG(6) << "processBundle failded !! : " 
-            //  << ", g_queueProcessEvents=" << g_queueProcessEvents;
           }
           i++;
         } catch (const std::exception &e) {}
@@ -442,7 +435,7 @@ void BundleProcessor::forward(Bundle bundle, std::vector<std::string> nextHop) {
         errors[hop] = e.error();
       }
     }
-    if (hops == 0) { // TODO  && !errors.empty()
+    if (hops == 0) {
       throw ForwardException("The bundle has not been send to any neighbour.",
                              errors);
     }

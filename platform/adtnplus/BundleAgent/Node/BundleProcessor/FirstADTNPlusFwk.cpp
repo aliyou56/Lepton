@@ -237,7 +237,7 @@ bool FirstADTNPlusFwk::processBundle(
 #endif
 #ifdef LEPTON
         if(!e.errors().empty()) {
-          for(auto i : e.errors()) { // TODO ==
+          for(auto i : e.errors()) { // TODO lepton
             if(i.second != static_cast<uint8_t>(NetworkError::SOCKET_RECEIVE_ERROR)) {
               LOG(3) << "Error : " << i.first << " -> " << i.second;
               restore(std::move(bundleContainer));
@@ -245,10 +245,7 @@ bool FirstADTNPlusFwk::processBundle(
               break;
             }
           }
-        } // TODO not yet compile
-        // else {
-        //   LOG(3) << "Error empty";
-        // }
+        } 
 #endif
       }
     } else {
