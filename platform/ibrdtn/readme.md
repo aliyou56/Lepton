@@ -1,9 +1,12 @@
-Comment lancer un scénario avec ibrDTN :
 
-Pour lancer un scénario avec ibrDTN, il faut avant tout, mettre le dossier tools dans le 
-dossier lepton (là où est installé le logiciel). Ensuite, il faut lancer le script
-/tools/bin/run_ibrdtn_full.sh suivi du scénario voulu, comme "adhocnet" par exemple. Quand cela est
-terminé, il faut lancer le script copie.sh contenu dans le même dossier. 
-Par la suite, il faut utiliser les données générées par le script copie.sh pour réaliser les graphiques 
-du script analyseurGraph.py. Ainsi on obtient les résultats du scénario sous la forme de graphiques en 
-barres et de courbes. Le script python génére aussi quelques données intéressantes.
+# Note
+Pour des besoins de traitement de logs, deux lignes ont été modifiées dans le fichier `core/BundleCore.cpp`.
+Ces modifications permettent d'ajouter au log le destinateur d'un message.
+
+# Installation de ibrDNT
+- Suivre les étapes décrites dans le fichier `guide_installation_ibrdtn` pour télécharge les outils necessaires
+- remplacer le fichier `ibrdtn-for-lepton/ibrdtn-adapter/bin/util/ibrdtn_functions` par le fichier `ibrdtn-adapter/bin/util/ibrdtn_functions`
+- Ensuite avant d'installer remplacer le fichier `ibrdtn-for-lepton/ibrdtn/deamon/src/core/BundleCore.cpp` par le fichier `ibrdtn/deamon/src/core/BundleCore.cpp`
+- `cd ibrdtn-for-lepton/ibrdtn`
+- `make`
+- `make install`
