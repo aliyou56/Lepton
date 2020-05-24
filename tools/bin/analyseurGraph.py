@@ -19,6 +19,10 @@ if len(sys.argv) != 2:
     exit(0)
 
 
+period = "10"
+oppnet = "ibrdtn"
+def out_filename(name):
+    return period + '_' + name + '_' + oppnet
 
 class Global:
     def __init__(self):
@@ -201,26 +205,26 @@ print("------------------------")
 
 
 
-def graphBar(size,barWidth,bars1,r1,listText,label,barColor,legende):
-    t,xl,yl = legende
-    plt.figure(figsize=size)
-    plt.barh(r1, bars1, height = barWidth, color = barColor)
-    plt.legend() 
-    plt.yticks([r + barWidth for r in range(len(r1))], listText)
+# def graphBar(size,barWidth,bars1,r1,listText,label,barColor,legende):
+#     t,xl,yl = legende
+#     plt.figure(figsize=size)
+#     plt.barh(r1, bars1, height = barWidth, color = barColor)
+#     plt.legend() 
+#     plt.yticks([r + barWidth for r in range(len(r1))], listText)
     
-    for i in range(len(r1)):
-        plt.text(y = r1[i]-0.2 , x = bars1[i]+0.5, s = label[i], size = 10)
+#     for i in range(len(r1)):
+#         plt.text(y = r1[i]-0.2 , x = bars1[i]+0.5, s = label[i], size = 10)
     
-    plt.subplots_adjust(bottom= 0.2, top = 0.98)
-    plt.title(t)
-    plt.xlabel(xl)
-    plt.ylabel(yl)
-    plt.tight_layout()
-    plt.savefig(legende[0])
-    plt.show()
+#     plt.subplots_adjust(bottom= 0.2, top = 0.98)
+#     plt.title(t)
+#     plt.xlabel(xl)
+#     plt.ylabel(yl)
+#     plt.tight_layout()
+#     plt.savefig(legende[0])
+#     # plt.show()
 
 
-def graphBar1(size,barWidth,bars1,r1,listText,barColor,label,legende,boolean):
+def graphBar1(size,barWidth,bars1,r1,listText,barColor,label,legende,boolean, filename):
     t,xl,yl = legende
     plt.figure(figsize=size)
     plt.bar(r1, bars1, width = barWidth, color = barColor)
@@ -236,8 +240,9 @@ def graphBar1(size,barWidth,bars1,r1,listText,barColor,label,legende,boolean):
     plt.tight_layout()
     if boolean == True:
         plt.ylim(0,105)
-    plt.savefig(legende[0])
-    plt.show()
+    # plt.savefig(legende[0])
+    plt.savefig(out_filename(filename))
+    # plt.show()
     
 
 def addToMap(key,value,m):
@@ -276,14 +281,12 @@ plt.plot(ind, yy)
 plt.scatter(ind, yy)
 plt.xticks(range(len(u)), u)
 plt.ylim([0,max(yy)+10])
-plt.xlabel("Noeud destinataire")
-plt.ylabel("Durée moyenne")
-plt.title("Durée moyenne de réception de chaque noeud ")
+plt.xlabel("Node")
+plt.ylabel("Average time (s)") # Durée moyenne
+plt.title("Average node reception time") # Durée moyenne de réception des noeuds
 plt.grid()
-plt.savefig("Durée moyenne de réception de chaque noeud")
-plt.show()
-
-
+plt.savefig(out_filename('avg_rcv_duration'))
+# plt.show()
 
 listGraph2 = {}
 for i in listNodeSort:
@@ -305,12 +308,12 @@ plt.plot(ind, yy)
 plt.scatter(ind, yy)
 plt.xticks(range(len(u)), u)
 plt.ylim([0,max(yy)+10])
-plt.xlabel("Noeud Source")
-plt.ylabel("Durée moyenne")
-plt.title("Durée moyenne d'envoi de chaque noeud ")
+plt.xlabel("Node") # Noeud Source
+plt.ylabel("Average time (s)") # Durée moyenne
+plt.title("Average sending time of each node") # Durée moyenne d'envoi de chaque noeud
 plt.grid()
-plt.savefig("Durée moyenne d'envoi de chaque noeud")
-plt.show()
+plt.savefig(out_filename('avg_snd_duration')) # Durée moyenne d'envoi de chaque noeud
+# plt.show()
 
 
 
@@ -323,7 +326,7 @@ for i in listNodeSort:
             
 xx = list(listGraph3.keys())
 yy = list(listGraph3.values())
-graphBar1((10,5),0.9,yy,[1,2,3,4,5,6,7,8,9,10],listNodeSort,"lightskyblue",yy,("Durée d'activité de chaque noeud","Noeud","Durée d'activité"),False)
+graphBar1((10,5),0.9,yy,[1,2,3,4,5,6,7,8,9,10],listNodeSort,"lightskyblue",yy,("Node activity duration","Node","Activity duration (s)"),False, 'activity_duration') # "Durée d'activité de chaque noeud","Noeud","Durée d'activité"
 
 
 
@@ -351,12 +354,12 @@ plt.legend()
 plt.xticks([r*3 + 0.5 + barWidth for r in range(10)],xx)
 label = ['n = 6', 'n = 25', 'n = 13']
 plt.subplots_adjust(bottom= 0.2, top = 0.98)
-plt.xlabel("Noeud")
+plt.xlabel("Node") # Noeud
 plt.ylabel("Nombre de connexion initiée")
-plt.title("Nombre de connexions d'entrées et de sorties initiées par chaque noeud")
+plt.title("Number of in/out connections") # Nombre de connexions d'entrées et de sorties initiées par chaque noeud
 plt.tight_layout()
-plt.savefig("Nombre de connexions d'entrées et de sorties initiées par chaque noeud")
-plt.show()
+plt.savefig(out_filename('nb_in_out_con')) # Nombre de connexions d'entrées et de sorties initiées par chaque noeud
+# plt.show()
 
 
 
@@ -373,7 +376,7 @@ for i in list(listGraph6.values()):
     t = i.split("/")
     yy.append(int((int(t[0])/int(t[1]))*100))
 
-graphBar1((10,5),0.9,yy,[1,2,3,4,5,6,7,8,9,10],listNodeSort,"slategray",yy,("Pourcentage des messages reçus pour chaque noeud","Noeud","Pourcentage des messages reçus"),True)
+graphBar1((10,5),0.9,yy,[1,2,3,4,5,6,7,8,9,10],listNodeSort,"slategray",yy,("Messages received by the nodes","Node","Messages received (%)"),True, 'msg_rcv') # "Pourcentage des messages reçus pour chaque noeud","Noeud","Pourcentage des messages reçus"
 
 
 
@@ -394,19 +397,19 @@ yy2 = list(listGraph8.values())
 
 u, ind = np.unique(xx, return_inverse=True)
 plt.figure(figsize=(10,5))
-plt.plot(ind, yy1,label="Nombre minimum")
-plt.plot(ind, yy2,label="Nombre maximum")
+plt.plot(ind, yy1,label="min") # Nombre minimum
+plt.plot(ind, yy2,label="max") # Nombre maximum
 plt.scatter(ind, yy1)
 plt.scatter(ind, yy2)
 plt.xticks(range(len(u)), u)
 plt.ylim([0,max(max(yy1),max(yy2))+1])
-plt.xlabel("Noeud")
-plt.ylabel("Nombre de voisin")
-plt.title("Nombre de voisin par noeud")
+plt.xlabel("Node") #
+plt.ylabel("Number of neighbors") # Nombre de voisin
+plt.title("Number of neighbors by node") # Nombre de voisin par noeud
 plt.legend()
 plt.grid()
-plt.savefig("Nombre de voisin par noeud")
-plt.show()
+plt.savefig(out_filename('nb_neighbors')) # "Nombre de voisin par noeud"
+# plt.show()
 
 
 
